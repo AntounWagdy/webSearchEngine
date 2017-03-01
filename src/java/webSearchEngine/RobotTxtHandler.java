@@ -22,7 +22,7 @@ public class RobotTxtHandler {
 	private Integer crawlDelay = 0;
 
 	/* Preparing the URL to Connect to */
-	public RobotTxt(URL url) {
+	public RobotTxtHandler(URL url) {
 		Disallow = new ArrayList<URL>();
 		
 		try {
