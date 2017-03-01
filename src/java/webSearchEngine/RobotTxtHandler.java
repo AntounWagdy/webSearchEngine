@@ -18,11 +18,11 @@ public class RobotTxtHandler {
 	private URL base;
 	private BufferedReader robotData;
 	private ArrayList<URL> Disallow;
+	private ArrayList<URL> Allow;
 	private Integer crawlDelay = 0;
-	// static private Set<URL> visited;
 
 	/* Preparing the URL to Connect to */
-	public RobotTxtHandler(URL url) {
+	public RobotTxt(URL url) {
 		Disallow = new ArrayList<URL>();
 		
 		try {
@@ -61,8 +61,9 @@ public class RobotTxtHandler {
 							}
 						} else if (inputLineArr[0].equals("Crawl-delay:")) {
 								crawlDelay = Integer.parseInt(inputLineArr[1]);
-						}
-
+						} else if(inputLineArr[0].equals("Allow:")) {
+								Allow.add(new URL(base+inputLineArr[1].trim()));
+						} 
 					}
 				}
 			}
@@ -80,6 +81,9 @@ public class RobotTxtHandler {
 
 	public ArrayList<URL> getDisallowed() {
 		return Disallow;
+	}
+	public ArrayList<URL> getAllowed() {
+		return Allow;
 	}
 	public Integer getCrawlDelay(){
 		return crawlDelay;
