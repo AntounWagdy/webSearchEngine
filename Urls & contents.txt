@@ -1,0 +1,52 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package test;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+/**
+ *
+ * @author Malak Fahim
+ */
+public class Test {
+
+    /**
+     * @param args the command line arguments
+     * @throws java.io.IOException
+     */
+    public static void main(String[] args) throws IOException {
+
+       String url = "http://www.stackoverflow.com";
+        Document doc = Jsoup.connect(url).get();
+        Elements links = doc.select("a[href]");
+        String urll;
+        ArrayList<String> myList = new ArrayList<String>();
+        for (Element link : links)
+        {
+            urll = link.absUrl("href");
+            System.out.println(urll);
+            myList.add(urll);
+
+        }
+        
+        
+       System.out.println("Content of web page");
+        
+        //get contents of web page
+        String urls = "http://www.learnthenet.com";
+         Document doc1 = Jsoup.connect(urls).get();
+        String text = doc1.body().text(); // "An example link"
+        System.out.println(text);
+
+    }
+
+}
