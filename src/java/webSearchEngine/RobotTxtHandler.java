@@ -26,9 +26,8 @@ public class RobotTxtHandler {
 
     /* Preparing the URL to Connect to */
     public RobotTxtHandler(URL url) {
-        Disallow = new ArrayList<URL>();
-
         try {
+            Disallow = new ArrayList<>();
             base = new URL(url.getProtocol() + "://" + url.getHost() + (url.getPort() > -1 ? ":" + url.getPort() : ""));
             String hostId = base + "/robots.txt";
             URL hostURL = new URL(hostId);
@@ -75,8 +74,8 @@ public class RobotTxtHandler {
         /* Closing the BufferReader */
         try {
             robotData.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

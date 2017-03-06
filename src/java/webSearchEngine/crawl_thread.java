@@ -1,15 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package webSearchEngine;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,7 +32,6 @@ public class crawl_thread extends Thread{
     
     @Override
     public void run() {
-        
         URL top = crawler.popUrl();
         if(top == null)
         {
@@ -56,32 +44,27 @@ public class crawl_thread extends Thread{
         // 3- extract links and push them to the queue
         // 4- store the document
         
-        //1
-        if(! http_handler.check_type_html(top))  // condition not perfectly handled
-        {
+        //1st
+        if(! http_handler.check_type_html(top)){  // condition not perfectly handled
             crawler.finish();
             return;
         }
         
-        if(crawler.get_visited(top))
-        {
+        if(crawler.get_visited(top)){
             return;
         }
 
-        //2
+        //2nd
         http_handler.downloadPage(top);
-
-        
         String page_body = http_handler.getBody();
         crawler.add_page(top.toString(),page_body);  // return false if page is not added
 
         ArrayList<URL> links_in_page = (ArrayList)http_handler.getUrls();
         
-        for(int i=0; i<links_in_page.size(); i++)
-        {
+        for(int i=0; i<links_in_page.size(); i++){
             crawler.pushUrl(links_in_page.get(i));
         }
-
+        
         crawler.start_new_threads();
         
     } 
