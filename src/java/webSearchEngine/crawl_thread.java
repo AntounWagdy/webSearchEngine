@@ -19,9 +19,8 @@ import java.util.Queue;
  *
  * @author Amr
  */
-public class crawl_thread implements Runnable{
+public class crawl_thread extends Thread{
     webCrawler crawler;
-    Thread  T;
     httpRequestHandler http_handler;
     Queue<URL> to_visit;
     
@@ -30,13 +29,13 @@ public class crawl_thread implements Runnable{
     {
         crawler = c;
         http_handler = new httpRequestHandler();    
-        T = new Thread(this);
     }
     
     
-    void start()
+    @Override
+    public void start()
     {
-        T.start();
+        super.start();
     }
     
     //criteria to stop crawling
