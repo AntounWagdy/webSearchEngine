@@ -1,4 +1,4 @@
-package webSearchEngine;
+package examples;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -22,8 +22,7 @@ public class httpRequestHandler {
             con.setRequestMethod("HEAD");
             String type = con.getContentType();
             con.disconnect();
-            if (type.startsWith("text/html"))
-            {
+            if (type.startsWith("text/html")) {
                 return true;
             }
         } catch (IOException ex) {
@@ -43,16 +42,21 @@ public class httpRequestHandler {
 
     ArrayList<URL> getUrls() {
         ArrayList<URL> myList = new ArrayList<>();
-        try {
-            Elements links = Doc.select("a[href]");
-            String urll;
-            for (Element link : links) {
+        String urll = "";
+        Elements links = Doc.select("a[href]");
+        
+        
+        for (Element link : links) {
+            try {
                 urll = link.absUrl("href");
-                myList.add(new URL(urll));
+                if (!urll.isEmpty()) {
+                    myList.add(new URL(urll));
+                }
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return myList;
     }
 
