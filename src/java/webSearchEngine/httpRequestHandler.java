@@ -1,4 +1,4 @@
-package examples;
+package webSearchEngine;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
