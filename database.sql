@@ -1,1 +1,0 @@
-SELECT * FROM search_engine.document;
