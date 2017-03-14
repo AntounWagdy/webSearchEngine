@@ -1,0 +1,1 @@
+To import this database you have to creat a schema with the name "search_engine" then import file in this folder
