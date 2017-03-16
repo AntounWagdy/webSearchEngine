@@ -1,8 +1,12 @@
 package webSearchEngine;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
@@ -21,51 +25,95 @@ public class crawl_thread extends Thread{
     }
     
     
-    @Override
-    public void start()
+   // @Override
+    /*    public void start()
     {
-        super.start();
-    }
+    //super.start();
+    }*/
     
     //criteria to stop crawling
     //1- queue is empty and no running threads
     
     @Override
     public void run() {
-        URL top = crawler.popUrl();
-        if(top == null)
-        {
-            crawler.finish();
-            return; 
-        }
         
-        // 1- check satisfaction of all conditions , connection, html, robot.txt
-        // 2- go and get the document and store it
-        // 3- extract links and push them to the queue
-        // 4- store the document
-        
-        //1st
-        if(! http_handler.check_type_html(top)){  // condition not perfectly handled
-            crawler.finish();
-            return;
-        }
-        
-        if(crawler.get_visited(top)){
-            return;
-        }
+    
+        while(true)    
+        {  
+            //1- check internet connectivity, if not connected work should be finished
+            if(!http_handler.check_connectivity())
+            {
+                break;
+            }
 
-        //2nd
-        http_handler.downloadPage(top);
-        String page_body = http_handler.getBody();
-        crawler.add_page(top.toString(),page_body);  // return false if page is not added
+            //2- pop from queue
+            URL top = crawler.popUrl();
+            if(top == null)
+            {
+                //System.out.println("refused 1");
+                continue;
+            }
 
-        ArrayList<URL> links_in_page = (ArrayList)http_handler.getUrls();
-        
-        for(int i=0; i<links_in_page.size(); i++){
-            crawler.pushUrl(links_in_page.get(i));
+            //3- check if doc is html
+            if(! http_handler.check_type_html(top)){ 
+                System.out.println("refused 2");
+                continue;
+              //  crawler.finish();
+              //  return;
+            }
+
+
+
+            //4- check robot disallow
+            if(!crawler.checkRobotTxt(top.toString()))
+            {
+                System.out.println("refused 3");
+                continue;
+                //crawler.finish();
+                //return;
+            }
+
+
+
+
+
+
+            //5- download, extract page body and save it
+            boolean downloaded = http_handler.downloadPage(top);
+            if(! downloaded)
+            {
+                System.out.println("refused 4");
+                    continue;
+                //crawler.finish();
+                //return;
+            }
+            String page_body = http_handler.getBody();
+            boolean added = crawler.add_page(top.toString(),page_body);  // return false if page is not added
+
+            // if !added means that connection may be lost or crawling limit is reached , so we have to break
+            if(!added)
+            {
+                //System.out.println("");
+                break;
+                //crawler.finish();
+                //return;
+            }
+
+
+
+
+            //6- extract links and push them to crawling queue
+            ArrayList<URL> links_in_page = (ArrayList)http_handler.getUrls();
+            //System.out.println("sizeeee: "+ links_in_page.size());
+            for(int i=0; i<links_in_page.size(); i++){
+                if(http_handler.valid(links_in_page.get(i)))
+                    crawler.pushUrl(links_in_page.get(i));
+            }
+
+
+            //System.out.println("Da5alt hena fahem");
+
         }
-        
-        crawler.start_new_threads();
-        
+            crawler.finish();
     } 
 }

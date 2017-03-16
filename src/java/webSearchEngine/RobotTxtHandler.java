@@ -8,6 +8,7 @@ package webSearchEngine;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,9 +21,11 @@ public class RobotTxtHandler {
     private String userAgent = "Googlebot";
     private URL base;
     private BufferedReader robotData;
+    private String robot_String;  // data as string
     private ArrayList<URL> Disallow;
     private ArrayList<URL> Allow;
-    private Integer crawlDelay = 0;
+    private Integer crawlDelay=0;  // default
+    private long last_time_stamp;
 
     /* Preparing the URL to Connect to */
     public RobotTxtHandler(URL url) {
@@ -33,6 +36,7 @@ public class RobotTxtHandler {
             URL hostURL = new URL(hostId);
             URLConnection connection = hostURL.openConnection();
             robotData = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            robot_String = robotData.toString();
             extractData();
         } catch (MalformedURLException ex) {
             Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -41,6 +45,15 @@ public class RobotTxtHandler {
         }
     }
 
+    
+    public RobotTxtHandler(String s)
+    {
+        robotData = new BufferedReader(new StringReader(s));
+        robot_String = s;
+        extractData();
+    }
+    
+    
     private void extractData() {
         String inputLine;
         String[] inputLineArr = {null, null};
@@ -90,4 +103,35 @@ public class RobotTxtHandler {
     public Integer getCrawlDelay() {
         return crawlDelay;
     }
+    
+    
+    public synchronized void wait_for_crawl_delay(long current_time)
+    {
+        if(crawlDelay == 0) // when equal =0  , this means that we shouldn't care about it
+            return;
+        
+        if(current_time - last_time_stamp >crawlDelay)
+        {
+            last_time_stamp = current_time;
+            return;
+        }
+        else
+        {
+            try {
+                Thread.sleep(crawlDelay);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            last_time_stamp = current_time;
+        }
+        
+    }
+    
+    @Override
+    public String toString()
+    {
+        return robot_String; 
+    }
+    
 }
+

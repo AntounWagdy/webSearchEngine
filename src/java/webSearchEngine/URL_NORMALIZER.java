@@ -27,19 +27,21 @@ public class URL_NORMALIZER {
     }
     
     
-    String normalize()
+      String normalize()
     {
         try {
-            unNormalized = new URL(unNormalized.toURI().normalize().toString());
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(URL_NORMALIZER.class.getName()).log(Level.SEVERE, null, ex);
+            
+            String str = unNormalized.toString();
+            str = str.replaceAll(" ", "%20");
+            unNormalized = new URL(str);
+           
         } catch (MalformedURLException ex) {
             Logger.getLogger(URL_NORMALIZER.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         
-        String scheme = null, host= null, path=  null, query= null;
-        int port;
+        String scheme = null, host= null, path= null, query= null;
+        int port=-1;
         try{
            scheme = unNormalized.toURI().getScheme();
            host = unNormalized.getHost();
@@ -51,24 +53,29 @@ public class URL_NORMALIZER {
         }
         
         // remove these special cases
-        path = path.replaceAll("/../", "/");
-        path = path.replaceAll("/./", "/");
-        
+        if(path != null)
+        {
+            path = path.replaceAll("/../", "/");
+            path = path.replaceAll("/./", "/");
+        }
 
         // check if eliminating the first Domain will affect the IP of host    
         // ex:   check if  "www.google.com" is the same as "google.com"
-
-        String[] domain_names = host.split("\\.");
-        
-        
-        StringBuilder sb = new StringBuilder();
-        for(int i=1; i<domain_names.length; i++)
-        {  
-            sb.append(domain_names[i]+".");
-        }
-        sb.deleteCharAt(sb.length()-1);
         
         try {
+            
+            
+            String[] domain_names = host.split("\\.");
+        
+        
+            StringBuilder sb = new StringBuilder();
+            for(int i=1; i<domain_names.length; i++)
+            {  
+                sb.append(domain_names[i]+".");
+            }
+            sb.deleteCharAt(sb.length()-1);
+            
+            
 
             InetAddress A1 = InetAddress.getByName(host);
             InetAddress A2 = InetAddress.getByName(sb.toString());
@@ -79,7 +86,10 @@ public class URL_NORMALIZER {
             }
             
         }catch (UnknownHostException ex) {
-                    Logger.getLogger(URL_NORMALIZER.class.getName()).log(Level.SEVERE, null, ex);
+                //    Logger.getLogger(URL_NORMALIZER.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (IndexOutOfBoundsException e)
+        {
+            System.out.println("url bayez: "+ unNormalized);
         }
         
         // remove index or default
@@ -95,10 +105,16 @@ public class URL_NORMALIZER {
                  path = temp.toString();
             }
         }
+
+       
         
         // reconstruct URL  --->   scheme+ authority/host + path +query
        
-        String Modified_url = scheme + "://" + host + path;
+        String Modified_url = scheme + "://" + host;
+        
+        Modified_url += (port == -1 || port == unNormalized.getDefaultPort())? "" : ":"+port;
+        
+        Modified_url += path;
         
         Modified_url += (query != null)? "?"+query : "";
 
