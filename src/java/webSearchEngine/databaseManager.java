@@ -30,7 +30,7 @@ public class databaseManager {
     //try
     //{
     String userDatabase = "root";   //username and password elly katabtohom w enta bt install mysql
-    String passDatabase = "godislove";
+    String passDatabase = "root";
 
     public databaseManager() throws SQLException {
         myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/search_engine?autoReconnect=true&useSSL=false", userDatabase, passDatabase);

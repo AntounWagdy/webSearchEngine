@@ -116,7 +116,11 @@ public class webCrawler {
 
             // if you crawled the agreed upon number "max_crawl_per_checkpt" , then save data in DB            
             if (crawled_insert.size() == max_crawl_per_checkpt) {
-                update_DB();
+                try {
+                    update_DB();
+                } catch (SQLException ex) {
+                    Logger.getLogger(webCrawler.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             System.out.println(url);
@@ -246,7 +250,7 @@ public class webCrawler {
         for (int i = 0; i < to_visit_insert.size() + 1; i++) {
             uuurll = to_visit_insert.remove().toString();
             //System.out.println(uuurll);
-            qm.insert_URL_into_to_visit(i,uuurll);    //lazm t insert bl ID l2en Id ellly gwa to_visite table mesh automatic w hwa mesh automatic l2eno base ll forign key elly gwa doc_words table
+            qm.insert_URL_into_to_visit(uuurll);  
 
         }
         to_visit_insert.clear();

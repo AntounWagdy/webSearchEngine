@@ -79,8 +79,8 @@ public class queryManager {
         return flag;
     }
          
-              int insert_URL_into_to_visit(int id,String url) throws SQLException {
-        sql = "INSERT INTO to_visit(docID,doc_url)values(" + id + ",'" + url + "')";
+              int insert_URL_into_to_visit(String url) throws SQLException {
+        sql = "INSERT INTO to_visit(doc_url)values('" + url + "')";
         res = db.insertOrUpdate(sql);
         return res;
     }
