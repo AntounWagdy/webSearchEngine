@@ -54,34 +54,72 @@ public class queryManager {
         myRes = db.select(sql);
         return myRes;
     }
+
     ///////////////////Update database ///////////////////
     int insertURLintoVisited(String url) throws SQLException {
         sql = "INSERT INTO visited(Url)values('" + url + "')";
         res = db.insertOrUpdate(sql);
         return res;
     }
-    
-      int insertinto_host_handler(String host,String handler) throws SQLException {
+
+    int insertinto_host_handler(String host, String handler) throws SQLException {
         sql = "INSERT INTO host_robot_handler(host,robot_handler)values('" + host + "' , '" + handler + "' )";
         res = db.insertOrUpdate(sql);
         return res;
     }
-      
-       int insertinto_downloaded_page(String url,String content) throws SQLException {
+
+    int insertinto_downloaded_page(String url, String content) throws SQLException {
         sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content + "' )";
         res = db.insertOrUpdate(sql);
         return res;
     }
-       
-         boolean deleteURLfrom_to_visit(String url) throws SQLException {
+
+    boolean deleteURLfrom_to_visit(String url) throws SQLException {
         sql = "delete from to_visit where doc_url ='" + url + "'";
         flag = db.delete(sql);
         return flag;
     }
-         
-              int insert_URL_into_to_visit(String url) throws SQLException {
+
+    int insert_URL_into_to_visit(String url) throws SQLException {
         sql = "INSERT INTO to_visit(doc_url)values('" + url + "')";
         res = db.insertOrUpdate(sql);
         return res;
+    }
+    ////////////////////////////////////////////
+
+    int insertinto_robot_handler_1(String host, int crawl_delaay) throws SQLException {
+        sql = "INSERT INTO robot_handler_1(host,crawl_delay)values('" + host + "' , '" + crawl_delaay + "' )";
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+
+    int insertinto_robot_handler_2(String host, String url) throws SQLException {
+        sql = "INSERT INTO robot_handler_2(host,url_disallowed)values('" + host + "' , '" + url + "' )";
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+
+    ResultSet selectdisallowedURL_byhost(String host) throws SQLException {
+        sql = "select url_disallowed from robot_handler_2 where host ='" + host + "'";
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    ResultSet selectdUrl_from_to_visit() throws SQLException {
+        sql = "select doc_url from to_visit";
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    ResultSet selectdUrl_from_visited() throws SQLException {
+        sql = "select Url from visited";
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    ResultSet selectHost_from_robot_handler_1() throws SQLException {
+        sql = "select host from robot_handler_1";
+        myRes = db.select(sql);
+        return myRes;
     }
 }
