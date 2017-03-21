@@ -3,29 +3,34 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webSearchEngine;
+package WebSearchEngine;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RobotTxtHandler {
+public class RobotTxtHandler implements Serializable{
 
     private String userAgent = "Googlebot";
     private URL base;
     private BufferedReader robotData;
-    private String robot_String;  // data as string
-    private ArrayList<URL> Disallow;
-    private ArrayList<URL> Allow;
+    private ArrayList<String> Disallow;
     private Integer crawlDelay=0;  // default
-    private long last_time_stamp;
+    private long last_time_stamp=0;
 
     /* Preparing the URL to Connect to */
     public RobotTxtHandler(URL url) {
@@ -36,7 +41,6 @@ public class RobotTxtHandler {
             URL hostURL = new URL(hostId);
             URLConnection connection = hostURL.openConnection();
             robotData = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            robot_String = robotData.toString();
             extractData();
         } catch (MalformedURLException ex) {
             Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -46,11 +50,11 @@ public class RobotTxtHandler {
     }
 
     
-    public RobotTxtHandler(String s)
+    public RobotTxtHandler(int c_delay, ArrayList<String> DisA)
     {
-        robotData = new BufferedReader(new StringReader(s));
-        robot_String = s;
-        extractData();
+        crawlDelay = c_delay;
+        Disallow = DisA;
+        
     }
     
     
@@ -69,12 +73,12 @@ public class RobotTxtHandler {
                                 // Refuse all
                                 //TODO:what to do
                             } else {
-                                Disallow.add(new URL(base + inputLineArr[1].trim()));
+                                Disallow.add((base + inputLineArr[1].trim()).toString());
                             }
                         } else if (inputLineArr[0].equals("Crawl-delay:")) {
                             crawlDelay = Integer.parseInt(inputLineArr[1]);
-                        } else if (inputLineArr[0].equals("Allow:")) {
-                            Allow.add(new URL(base + inputLineArr[1].trim()));
+                        //} else if (inputLineArr[0].equals("Allow:")) {
+                          //  Allow.add(new URL(base + inputLineArr[1].trim()));
                         }
                     }
                 }
@@ -92,13 +96,13 @@ public class RobotTxtHandler {
         }
     }
 
-    public ArrayList<URL> getDisallowed() {
+    public ArrayList<String> getDisallowed() {
         return Disallow;
     }
 
-    public ArrayList<URL> getAllowed() {
-        return Allow;
-    }
+//    public ArrayList<URL> getAllowed() {
+//        return Allow;
+//    }
 
     public Integer getCrawlDelay() {
         return crawlDelay;
@@ -127,11 +131,29 @@ public class RobotTxtHandler {
         
     }
     
-    @Override
+   /* @Override
     public String toString()
     {
-        return robot_String; 
+        
+        
+        
+        StringBuffer data = new StringBuffer();
+        data.append(base.toString()+"\n");
+        try {
+           
+            String line;
+            while ((line = temp.readLine()) != null) {
+                data.append(line+"\n");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+
+        
+        
+        RobotTxtHandler gh = new RobotTxtHandler(data.toString());
+        return data.toString();
     }
-    
+    */
 }
 

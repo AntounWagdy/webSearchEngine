@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Malak%20Fahim/Desktop/localRepo/src/java/webSearchEngine/queryManager.java</file>
-            <file>file:/C:/Users/Malak%20Fahim/Desktop/localRepo/src/java/webSearchEngine/databaseManager.java</file>
-            <file>file:/C:/Users/Malak%20Fahim/Desktop/localRepo/src/java/webSearchEngine/webCrawler.java</file>
-            <file>file:/C:/Users/Malak%20Fahim/Desktop/localRepo/src/java/webSearchEngine/crawl_thread.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/webCrawler.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/queryManager.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/Crawler_Data_loader.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/crawl_thread.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/WebSearchEngine.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/httpRequestHandler.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/URL_NORMALIZER.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/databaseManager.java</file>
+            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/RobotTxtHandler.java</file>
         </group>
     </open-files>
 </project-private>

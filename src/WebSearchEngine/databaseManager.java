@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package webSearchEngine;
+package WebSearchEngine;
 
 /**
  *
@@ -43,13 +43,15 @@ public class databaseManager {
         return myRes;
     }
 
-    int insertOrUpdate(String sql) throws SQLException {
+    int insertOrUpdate(String sql)  {
 
+        
         try {
             res = myStatement.executeUpdate(sql);
-        } catch (SQLException e) {
-            res = -1;
+        } catch (SQLException ex) {
+            Logger.getLogger(databaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return res;
     }
 

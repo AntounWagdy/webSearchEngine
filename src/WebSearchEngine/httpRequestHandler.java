@@ -1,6 +1,7 @@
-package webSearchEngine;
+package WebSearchEngine;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
@@ -22,9 +23,13 @@ public class httpRequestHandler {
     private Document Doc;
 
     
-    boolean check_type_html(URL url) {
+    boolean check_type_html(String s) {
+    
+
+        
         HttpURLConnection con = null;
         try {    
+            URL url = new URL(s);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("HEAD");
             
@@ -99,10 +104,10 @@ public class httpRequestHandler {
     }
     
     
-    boolean downloadPage(URL url) {
+    boolean downloadPage(String url) {
         try {
            // System.out.println(url);
-            Doc = Jsoup.connect(url.toString()).get();
+            Doc = Jsoup.connect(url).get();
         }
        /* catch (HttpStatusException e)
         {
@@ -140,8 +145,15 @@ public class httpRequestHandler {
     }
 
     String getBody() {
-        return Doc.body().text();
-    }
+        String s =Doc.body().text();
+        String r = null;
+        try {
+            r = new String(s.getBytes(), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            return r;
+        }
 
     
     

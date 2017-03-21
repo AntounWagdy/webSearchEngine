@@ -1,4 +1,4 @@
-package webSearchEngine;
+package WebSearchEngine;
 
 import java.util.HashMap;
 import java.util.Map;
