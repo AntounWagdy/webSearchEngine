@@ -34,6 +34,18 @@ public class Crawler_Data_loader {
     }
     
    
+    int get_crawled_count()
+    {
+        ResultSet rs = qm.get_crawling_count();
+        int result = 0;
+        try {
+            rs.next();
+            result = rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(Crawler_Data_loader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
 
     Queue get_to_visit_urls() {
         

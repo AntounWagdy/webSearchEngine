@@ -44,7 +44,7 @@ public class WebSearchEngine {
         Queue<String> to_visit = loader.get_to_visit_urls();
         Set<String> visited = loader.get_visited_urls();
         Map<String, RobotTxtHandler> robots = loader.get_robot_handlers();
-
+        int crawled_count = loader.get_crawled_count();
         
         if(to_visit.size() == 0)
         {
@@ -57,7 +57,7 @@ public class WebSearchEngine {
         webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate);
         
         //set seeds for crawling
-        crawler.set_Main_data(to_visit,visited, robots);
+        crawler.set_Main_data(to_visit,visited, robots, crawled_count);
         
         
         crawler.start_threads();

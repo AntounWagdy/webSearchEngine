@@ -30,6 +30,7 @@ public class webCrawler {
     int running_ths = 0;    //number of running threads
     int max_crawled_count;  // max to be crawled
     int max_crawl_per_checkpt;  // number of pages to be crawled between two checkpoints
+    int crawling_count;    // number of crawled pages till now
     Queue<String> to_visit;
     Set<String> visited;     // elemnts here means that those URLs are already popped out from queue
     Map<String, String> crawled_pages;   // map key = URL,, value= page text 
@@ -101,21 +102,22 @@ public class webCrawler {
     }
     
     
-    void set_Main_data(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH) {
+    void set_Main_data(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH, int cc) {
         to_visit = TV;
         visited = V;
         RobotHandlers = RH;
+        crawling_count = cc;
     }
 
-    //use this function for the first time crawl ,i.e. you don't have a sved version of main data in DB  
-    void set_Queue(Queue<String> Q)//initialize queue
+   
+    void set_crawling_count(int c)
     {
-        to_visit = Q;
+        crawling_count = c;
     }
 
     boolean add_page(String url, String page) {
 
-        if (crawled_pages.size() < max_crawled_count) {
+        if (crawling_count < max_crawled_count) {
 
 
            synchronized(crawled_insert)
@@ -147,11 +149,21 @@ public class webCrawler {
                     }
                 }
             }
-
+            
+            crawling_count++;
             System.out.println(url);
             System.out.println(crawled_pages.size());
             //System.out.println("page added "+ crawled_pages.size());
             return true;
+        }
+        else
+        {
+            queryManager qm = new queryManager();
+            qm.Flush_visited();
+            qm.Flush_to_visit();
+            qm.Flush_robot_2();
+            qm.Flush_robot_1();
+
         }
         return false;
     }
@@ -219,13 +231,8 @@ public class webCrawler {
         running_ths--;
         if (running_ths == 0) {
             
-            queryManager qm = new queryManager();
-            
-            qm.Flush_visited();
-            qm.Flush_to_visit();
-            qm.Flush_robot_2();
-            qm.Flush_robot_1();
-            
+  
+                        
             System.out.println("5lass ,  raowa7");
             System.out.println("size of queue = " + to_visit.size());
             System.out.println(crawled_pages.size());

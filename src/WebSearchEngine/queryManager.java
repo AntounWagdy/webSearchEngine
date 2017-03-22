@@ -76,6 +76,17 @@ public class queryManager{
         }
         return myRes;
     }
+    
+    ResultSet get_crawling_count()
+    {
+        sql = "SELECT count(ID) from downloaded_page";
+        try {
+            myRes = db.select(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return myRes;
+    }
 
     ///////////////////Update database ///////////////////
     int insertURLintoVisited(String url)  {
