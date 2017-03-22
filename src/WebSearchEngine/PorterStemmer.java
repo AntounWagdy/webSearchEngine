@@ -1,19 +1,43 @@
 package WebSearchEngine;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PorterStemmer {
 
     private StringBuilder SB;
     private int M[]; // m denotes the (CV)^m where C is the not vowels chars and V is the vowels
-                     // M is the array where we but m for each substring
+    // M is the array where we but m for each substring
     private int V[]; // number of vowels for each substring
     static Map<String, String> Stemms = new HashMap<>(); // A map to savee the words stemmed before
 
-    public String STEM(String S) {
-        S = S.toLowerCase().trim();
+    ArrayList<String> StemArr(ArrayList<String> data) {
+        ArrayList<String> res = new ArrayList<>();
+        for (String Text : data) {
+            res.addAll(this.StemText(Text));
+        }
+        return res;
+    }
 
+    ArrayList<String> StemText(String Text) {
+        ArrayList<String> res = new ArrayList<>();
+        Text = Text.trim().toLowerCase();
+        String[] arr = Text.split("[\\s!#%^@` —\n\t\r \\[\\]{}\"&*(:;)\\\\<>?,/_.?$+-]+");
+        for (String word : arr) {
+            if (!word.equals("")) {
+                res.add(this.STEM(word));
+            }
+        }
+        return res;
+    }
+
+    public String STEM(String S) {
+
+        System.out.println(S);
         // Initialize data
         if (Stemms.containsKey(S)) {
             return Stemms.get(S);
@@ -33,12 +57,22 @@ public class PorterStemmer {
         Step4();
         Step5a();
         Step5b();
-        Stemms.put(S, SB.toString());
-        return SB.toString();
+
+        
+        String res = "";
+        try {
+            res = new String(SB.toString().getBytes(), "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(PorterStemmer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        Stemms.put(S, res);
+        return res;
     }
 
     private void Step5b() {
-        if (M[SB.length() - 1] > 1 && SB.charAt(SB.length() - 1) == SB.charAt(SB.length() - 2)
+        if (SB.length() > 2 && M[SB.length() - 1] > 1 && SB.charAt(SB.length() - 1) == SB.charAt(SB.length() - 2)
                 && SB.charAt(SB.length() - 1) == 'l') {
             SB.deleteCharAt(SB.length() - 1);
         }
@@ -308,7 +342,7 @@ public class PorterStemmer {
     }
 
     private void Step1c() {
-        if (SB.charAt(SB.length() - 1) == 'y' && V[SB.length() - 2] > 0) {
+        if (SB.length() > 1 && SB.charAt(SB.length() - 1) == 'y' && V[SB.length() - 2] > 0) {
             SB.deleteCharAt(SB.length() - 1);
             SB.append("i");
         }
@@ -345,7 +379,7 @@ public class PorterStemmer {
                 && SB.charAt(SB.length() - 1) != 's' && SB.charAt(SB.length() - 1) != 'l'
                 && SB.charAt(SB.length() - 1) != 'z') {
             SB.deleteCharAt(SB.length() - 1);
-        } else if (M[SB.length()] == 1 && !vowel(SB.length() - 1) && vowel(SB.length() - 2) && !vowel(SB.length() - 3)
+        } else if (SB.length() > 2 && M[SB.length()] == 1 && !vowel(SB.length() - 1) && vowel(SB.length() - 2) && !vowel(SB.length() - 3)
                 && SB.charAt(SB.length() - 1) != 'w' && SB.charAt(SB.length() - 1) != 'x'
                 && SB.charAt(SB.length() - 1) != 'y') {
             SB.append("e");
@@ -422,4 +456,5 @@ public class PorterStemmer {
     private void replaceWithV(String S, String V) {
         SB.replace(SB.length() - S.length(), SB.length(), V);
     }
+
 }

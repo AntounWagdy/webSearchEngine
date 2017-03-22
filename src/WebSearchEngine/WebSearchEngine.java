@@ -5,8 +5,10 @@
  */
 package WebSearchEngine;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -16,6 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
  /*
  * @author Amr
@@ -25,7 +29,18 @@ public class WebSearchEngine {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    
+    public static void main(String [] args) throws IOException
+    {
+        Map<String,Document> m  = new HashMap<String, Document>();
+        
+        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
+      
+        m.put("x", Doc);
+        Indexer I = new Indexer (m);
+        I.Execute();
+    }
+    public static void main2(String[] args) {
         // TODO code application logic here
    
         /*
