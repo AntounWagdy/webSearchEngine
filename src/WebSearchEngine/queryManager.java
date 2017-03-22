@@ -246,4 +246,83 @@ public class queryManager{
         }
         return myRes;
     }
+    
+        ///////////// For Antoun /////////////////////////////////
+    int insertinto_document(String url) throws SQLException {
+        sql = "INSERT INTO document(Url)values('" + url + "')";
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+
+    void insert_url_document(String url) throws SQLException {
+        this.insertinto_document(url);
+    }
+    ////////////////////////////////////////////
+
+    ResultSet selectID_from_document(String url) throws SQLException {
+        sql = "select docId from document where Url ='" + url + "'";
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    int getId_from_document(String url) throws SQLException {
+        String ID;
+        int ID_integer = 0;
+        ResultSet rs = this.selectID_from_document(url);
+        while (rs.next()) {              //already el Resultset will be return witne only one element
+
+            ID = (rs.getString("docId"));
+            ID_integer = Integer.parseInt(ID);
+
+        }
+        return ID_integer;
+    }
+    ////////////////////////////////////////////////////
+
+    ResultSet selectUrlbyID_from_document(int id) throws SQLException {
+
+        sql = "select Url from document where docId =" + id;
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    String getUrlbyID_from_document(int id) throws SQLException {
+        String url = "";
+        ResultSet rs = this.selectUrlbyID_from_document(id);
+        while (rs.next()) {
+
+            url = (rs.getString("Url"));
+        }
+        return url;
+    }
+
+    /////////////////////////////////////////////////////
+    int insertinto_doc_words(int id_doc, String word, int pos, String status) throws SQLException {
+        sql = "INSERT INTO doc_words(ID_doc,word,position,status)values('" + id_doc + "' , '" + word + "' , '" + pos + "' , '" + status + "' )";
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+
+    void insert_into_doc_words(int id_doc, String word, int pos, String status) throws SQLException {
+        this.insertinto_doc_words(id_doc, word, pos, status);
+    }
+
+    //////////////////////////////////////////////////
+    ResultSet select_DOCID_from_doc_words(String word, int pos, String status) throws SQLException {
+        sql = "select ID_doc from doc_words where word ='" + word + "'  AND status ='" + status + "' AND position=" + pos;
+        myRes = db.select(sql);
+        return myRes;
+    }
+
+    int getId_from_doc_words(String word, int pos, String status) throws SQLException {
+        String ID;
+        int ID_integer = 0;
+        ResultSet rs = this.select_DOCID_from_doc_words(word, pos, status);
+        while (rs.next()) {              //already el Resultset will be return witne only one element
+
+            ID = (rs.getString("ID_doc"));
+            ID_integer = Integer.parseInt(ID);
+        }
+        return ID_integer;
+    }
 }
