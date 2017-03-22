@@ -26,7 +26,7 @@ public class PorterStemmer {
     ArrayList<String> StemText(String Text) {
         ArrayList<String> res = new ArrayList<>();
         Text = Text.trim().toLowerCase();
-        String[] arr = Text.split("[\\s!#%^@` —\n\t\r \\[\\]{}\"&*(:;)\\\\<>?,/_.?$+-]+");
+        String[] arr = Text.split("[\\s!#%^@|+` —\n\t\r \\[\\]{}\"&*(:;)\\\\<>?,/_.?$-]+");
         for (String word : arr) {
             if (!word.equals("")) {
                 res.add(this.STEM(word));

@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 
 public class Indexer {
     Map<String, Document> dataMap;
-    int in = 0 ;
     public Indexer(Map<String, Document> m) {
         this.dataMap = m;
     }
@@ -46,7 +45,6 @@ public class Indexer {
                     /*Add or update database*/
                 }
             }
-            System.out.println(in);
         }
     }
 
