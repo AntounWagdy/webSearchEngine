@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jsoup.nodes.Document;
 
 /**
  *
@@ -30,6 +31,19 @@ public class queryManager{
         }
     }
 
+    ResultSet select_downloaded_pages()
+    {
+        sql = "SELECT Url, page_content FROM search_engine.downloaded_page";
+        
+        try {
+            myRes = db.select(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return myRes;
+    }
+    
     ResultSet selectUrlbyID(int id){
 
         sql = "select doc_url from to_visit where docID =" + id;
@@ -57,6 +71,17 @@ public class queryManager{
         return res;
     }
 
+    boolean delete_all_from_downloaded_pages()
+    {
+        sql = "delete from downloaded_page";
+        try {
+            flag = db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return flag;
+    }
+    
     boolean deleteURLbyID(int docid) {
         sql = "delete from to_visit where docID =" + docid;
         try {
@@ -101,8 +126,8 @@ public class queryManager{
         return res;
     }
 
-    int insertinto_downloaded_page(String url, String content){
-        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.replaceAll("[^\\p{ASCII}]", "").replace("'", "\\'").replace("\"","\\\"") + "' )";
+    int insertinto_downloaded_page(String url, Document content){
+        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.html().replaceAll("[^\\p{ASCII}]", "").replace("'", "\\'").replace("\"","\\\"") + "' )";
         res = db.insertOrUpdate(sql);
         return res;
     }

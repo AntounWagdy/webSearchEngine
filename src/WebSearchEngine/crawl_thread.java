@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jsoup.nodes.Document;
 
 
 /**
@@ -88,7 +89,7 @@ public class crawl_thread extends Thread{
                 //crawler.finish();
                 //return;
             }
-            String page_body = http_handler.getBody();
+            Document page_body = http_handler.get_doc();
             boolean added = crawler.add_page(top.toString(),page_body);  // return false if page is not added
 
             // if !added means that connection may be lost or crawling limit is reached , so we have to break

@@ -3,15 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/webCrawler.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/queryManager.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/Crawler_Data_loader.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/crawl_thread.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/WebSearchEngine.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/httpRequestHandler.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/URL_NORMALIZER.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/databaseManager.java</file>
-            <file>file:/C:/Users/Amr/Documents/NetBeansProjects/WebSearchEngine/src/WebSearchEngine/RobotTxtHandler.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/webCrawler.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/httpRequestHandler.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/databaseManager.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/WebSearchEngine.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/Crawler_Data_loader.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/queryManager.java</file>
+            <file>file:/C:/Users/Amr/Desktop/webSearchEngine/src/WebSearchEngine/crawl_thread.java</file>
         </group>
     </open-files>
 </project-private>

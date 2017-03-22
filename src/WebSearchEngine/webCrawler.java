@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import netscape.javascript.JSObject;
+import org.jsoup.nodes.Document;
 
 
 /**
@@ -31,9 +32,10 @@ public class webCrawler {
     int max_crawled_count;  // max to be crawled
     int max_crawl_per_checkpt;  // number of pages to be crawled between two checkpoints
     int crawling_count;    // number of crawled pages till now
+    Boolean crawling_finished;   // if the crawling phase has completely finished, this boolean will be set
     Queue<String> to_visit;
     Set<String> visited;     // elemnts here means that those URLs are already popped out from queue
-    Map<String, String> crawled_pages;   // map key = URL,, value= page text 
+    Map<String, Document> crawled_pages;   // map key = URL,, value= page text 
 
     Map<String, RobotTxtHandler> RobotHandlers;    // key = hostname , value = RobotTxtobject ,
     // contain all needed robotTxtHandlers for all websites,
@@ -45,16 +47,17 @@ public class webCrawler {
     Queue<String> to_visit_insert;    // URLS that are pushed in queue after the last checkpoint ,but not popped
   //  Queue<String> to_visit_delete;    // URLS that are popped after the last checkpoint, you have to remove them from the DB
     Map<String, RobotTxtHandler> Robots_insert;  // handlers inserted in Robot handler map after the last checkpoint
-    Map<String, String> crawled_insert;  // crawled pages inserted in crawled_pages map after last checkpoint
+    Map<String, Document> crawled_insert;  // crawled pages inserted in crawled_pages map after last checkpoint
 
     Thread threads [];
     
-    public webCrawler(int _max_threads, int _max_pages, int save_rate){
+    public webCrawler(int _max_threads, int _max_pages, int save_rate, Boolean crawling_finished){
         //queryManager qm = new queryManager();
         max_threads = _max_threads;
         max_crawled_count = _max_pages;
         max_crawl_per_checkpt = save_rate;
-
+        this.crawling_finished = crawling_finished;
+        
         //initialize Main data structure
         to_visit = new ConcurrentLinkedQueue();
         visited = new ConcurrentSkipListSet();
@@ -110,62 +113,59 @@ public class webCrawler {
     }
 
    
-    void set_crawling_count(int c)
-    {
-        crawling_count = c;
-    }
+   
 
-    boolean add_page(String url, String page) {
+    boolean add_page(String url, Document page) {
 
-        if (crawling_count < max_crawled_count) {
-
-
-           synchronized(crawled_insert)
-           {
-            crawled_insert.put(url, page);
-            crawled_pages.put(url, page);
-
-            //if you crawled the agreed upon number "max_crawl_per_checkpt" , then save data in DB            
-            if (crawled_insert.size() == max_crawl_per_checkpt) {
+        synchronized(crawled_insert)
+        {
         
+            if (crawling_count < max_crawled_count) {
 
-                    synchronized(to_visit_insert)
-                    {
-                        synchronized(visited_insert)
-                        {
-                            synchronized(Robots_insert)
-                            {
-                   try {
-                       System.out.println("Waiting ...");
-                        //Thread.sleep(3000);
-                       update_DB();
-                       System.out.println("DB updated");
-                   } catch (Exception e) {
-                   }
-           
-                   //                    update_DB(); 
-                    }
-                    }
+                crawled_insert.put(url, page);
+                crawled_pages.put(url, page);
+
+                crawling_count++;
+                System.out.println(url);
+                System.out.println(crawled_pages.size());
+
+
+                //if you crawled the agreed upon number "max_crawl_per_checkpt" , then save data in DB            
+                if (crawled_insert.size() == max_crawl_per_checkpt) {
+
+                synchronized(to_visit_insert){
+                    synchronized(visited_insert){
+                        synchronized(Robots_insert){
+                           try {
+                               System.out.println("Waiting ...");
+                                //Thread.sleep(3000);
+                               update_DB();
+                               System.out.println("DB updated");
+                           } catch (Exception e) {
+                           }
+
+                           //                    update_DB(); 
+                        }
                     }
                 }
-            }
-            
-            crawling_count++;
-            System.out.println(url);
-            System.out.println(crawled_pages.size());
-            //System.out.println("page added "+ crawled_pages.size());
-            return true;
-        }
-        else
-        {
-            queryManager qm = new queryManager();
-            qm.Flush_visited();
-            qm.Flush_to_visit();
-            qm.Flush_robot_2();
-            qm.Flush_robot_1();
+                }
 
+                     //System.out.println("page added "+ crawled_pages.size());
+                    return true;
+            }
+            else
+            {
+                crawling_finished = Boolean.TRUE;
+
+                queryManager qm = new queryManager();
+                qm.Flush_visited();
+                qm.Flush_to_visit();
+                qm.Flush_robot_2();
+                qm.Flush_robot_1();
+
+            }
+            return false;
         }
-        return false;
     }
 /*
     public int get_crawled_pages_count() {
@@ -231,8 +231,6 @@ public class webCrawler {
         running_ths--;
         if (running_ths == 0) {
             
-  
-                        
             System.out.println("5lass ,  raowa7");
             System.out.println("size of queue = " + to_visit.size());
             System.out.println(crawled_pages.size());
@@ -241,12 +239,24 @@ public class webCrawler {
 
     // instead of start_new_threads
     void start_threads() {
+        
+        Thread ts[] = new Thread[max_threads];
+        
         for (int i = 0; i < max_threads; i++) {
-            crawl_thread T = new crawl_thread(this);
-            T.start();
+            ts[i] = new crawl_thread(this);
+            ts[i].start();
             running_ths++;
             System.out.println("new thread created: " + running_ths);
         }
+        
+        for(int i=0; i< max_threads; i++){
+            try {
+                ts[i].join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(webCrawler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
 
     // to be implemented by luca 
@@ -322,9 +332,9 @@ public class webCrawler {
         
          
         String url_page;
-        String content_page;
+        Document content_page;
 
-        for (Map.Entry<String, String> entry : crawled_insert.entrySet()) {
+        for (Map.Entry<String, Document> entry : crawled_insert.entrySet()) {
             url_page = entry.getKey();
             content_page = entry.getValue();
             qm.insertinto_downloaded_page(url_page, content_page);

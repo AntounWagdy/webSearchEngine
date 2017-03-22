@@ -144,6 +144,13 @@ public class httpRequestHandler {
         return myList;
     }
 
+      
+    Document get_doc()
+    {
+        return Doc;
+    }
+      
+      
     String getBody() {
         String s =Doc.body().text();
         String r = null;

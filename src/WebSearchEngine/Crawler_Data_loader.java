@@ -35,9 +35,9 @@ public class Crawler_Data_loader {
     
    
     int get_crawled_count()
-    {
+    {        int result = 0;
+
         ResultSet rs = qm.get_crawling_count();
-        int result = 0;
         try {
             rs.next();
             result = rs.getInt(1);
