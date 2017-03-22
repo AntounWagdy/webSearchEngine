@@ -36,8 +36,6 @@ public class PorterStemmer {
     }
 
     public String STEM(String S) {
-
-        System.out.println(S);
         // Initialize data
         if (Stemms.containsKey(S)) {
             return Stemms.get(S);

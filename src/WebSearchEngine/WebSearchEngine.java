@@ -36,7 +36,7 @@ public class WebSearchEngine {
         
         Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
       
-        m.put("x", Doc);
+        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
         Indexer I = new Indexer (m);
         I.Execute();
     }
