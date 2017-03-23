@@ -25,12 +25,9 @@ public class Program {
     void run_search_Engine()
     {
         while(true)
-        {
-            
-            
-            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
+        {            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
             int _max_threads = 5;
-            int _max_pages = 1000;
+            int _max_pages = 5000;
             int save_rate = 100;
 
             Crawler_Data_loader loader = new Crawler_Data_loader();
@@ -63,9 +60,9 @@ public class Program {
             }
             
             Map<String, Document> pages = get_downloaded_pages();
-            flush_downloaded_pages();
-            System.out.println(" dddddddddddddddddddddddddddddddddddddddd");
+            //flush_downloaded_pages();
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
+            
             
             break;
         }

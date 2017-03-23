@@ -128,6 +128,4 @@ public class Crawler_Data_loader {
         return Hosts;
 
     }
-
-    
 }

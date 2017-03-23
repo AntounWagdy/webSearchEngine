@@ -31,6 +31,7 @@ public class Indexer {
 
             /*2- Stem any thing else*/
             String[] tags = {"ul", "ol", "table", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
+            ComplexInsert stmt = new ComplexInsert();
 
             for (int i = 0; i < tags.length; i++) {
                 /*Stem the above tags*/
@@ -38,11 +39,13 @@ public class Indexer {
                 Elements E = entry.getValue().select(tags[i]);
                 for (int k = 0; k < E.size(); k++) {
                     res = PS.StemText(E.get(k).text());
-                    if(!res.isEmpty())
-                        Q.optimizedInsertIntoDocWords(doc_id, res, tags[i]+" "+k);
+                    if (!res.isEmpty()) { //Q.optimizedInsertIntoDocWords(doc_id, res, tags[i]+" "+k);
+                        stmt.add(doc_id, res, tags[i] + "_" + k);
+                    }
                 }
                 System.out.println(tags[i] + " has finished B-)");
             }
+            stmt.Execute();
         }
     }
 

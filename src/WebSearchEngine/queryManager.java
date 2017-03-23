@@ -307,7 +307,6 @@ public class queryManager {
     }
 
     int optimizedInsertIntoDocWords(int id_doc, ArrayList<String> word, String status) {
-
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
         for (int i = 0; i < word.size(); i++) {
@@ -318,7 +317,7 @@ public class queryManager {
         res = db.insertOrUpdate(sql);
         return res;
     }
-
+    
     //////////////////////////////////////////////////
     ResultSet select_DOCID_from_doc_words(String word, int pos, String status) {
         sql = "select ID_doc from doc_words where word ='" + word + "'  AND status ='" + status + "' AND position=" + pos;
