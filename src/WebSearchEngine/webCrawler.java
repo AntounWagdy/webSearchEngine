@@ -35,7 +35,7 @@ public class webCrawler {
     Boolean crawling_finished;   // if the crawling phase has completely finished, this boolean will be set
     Queue<String> to_visit;
     Set<String> visited;     // elemnts here means that those URLs are already popped out from queue
-    Map<String, Document> crawled_pages;   // map key = URL,, value= page text 
+//    Map<String, Document> crawled_pages;   // map key = URL,, value= page text 
 
     Map<String, RobotTxtHandler> RobotHandlers;    // key = hostname , value = RobotTxtobject ,
     // contain all needed robotTxtHandlers for all websites,
@@ -62,7 +62,7 @@ public class webCrawler {
         to_visit = new ConcurrentLinkedQueue();
         visited = new ConcurrentSkipListSet();
         RobotHandlers = new ConcurrentHashMap();
-        crawled_pages = new ConcurrentHashMap();
+//        crawled_pages = new ConcurrentHashMap();
 
         //initialize Auxiliary Data structure
         visited_insert = new ConcurrentSkipListSet();
@@ -74,11 +74,12 @@ public class webCrawler {
 
     boolean checkRobotTxt(String urlString) {
     
+        synchronized(Robots_insert){
         try {
             URL url = new URL(urlString);
             URL base = new URL(url.getProtocol() + "://" + url.getHost() + (url.getPort() > -1 ? ":" + url.getPort() : ""));
 
-            if (!RobotHandlers.containsKey(base)) //first create handler if it does not exist
+                if (!RobotHandlers.containsKey(base.toString())) //first create handler if it does not exist
             {
                 RobotTxtHandler H = new RobotTxtHandler(base);
                 RobotHandlers.put(base.toString(), H);
@@ -97,11 +98,7 @@ public class webCrawler {
         }
         return false;//wrong URL
     }
-    // use this function to set Main data if you have a saved version
 
-    void set_threads(Thread [] ts)
-    {
-        threads = ts;
     }
     
     
@@ -123,11 +120,12 @@ public class webCrawler {
             if (crawling_count < max_crawled_count) {
 
                 crawled_insert.put(url, page);
-                crawled_pages.put(url, page);
+//                crawled_pages.put(url, page);
 
                 crawling_count++;
                 System.out.println(url);
-                System.out.println(crawled_pages.size());
+                //System.out.println(crawled_pages.size());
+                System.out.println("crawl count =" + crawling_count);
 
 
                 //if you crawled the agreed upon number "max_crawl_per_checkpt" , then save data in DB            
@@ -198,32 +196,34 @@ public class webCrawler {
             Logger.getLogger(crawl_thread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        synchronized(to_visit){
+            synchronized(visited){
+                synchronized(to_visit_insert){
+         
         if (!to_visit.contains(url) && !visited.contains(url)) {
             to_visit_insert.add(url);
             return to_visit.add(url);
         }
         return false;
-        
+    }
+            }
+        }
     }
 
      String popUrl() {  // sync
+        
+       synchronized(to_visit){
+           synchronized(visited){
+               synchronized(visited_insert){
         String url = to_visit.poll();
-
-        /*
-    if URL is popped from queue, it should be marked as visited
-    so as not to be pushed again into queue    
-         */
-        if (url != null) {
+                    if(url != null){
             visited.add(url);
             visited_insert.add(url);
-            
-            //if(to_visit_insert.contains(url))
-            //    to_visit_insert.remove();
-            
-            //to_visit_delete.add(url);   //malhoosh ay lazma 
         }
-
         return url;
+    }
+           }
+       }
     }
 
     // N.B. : we can recieve here Thread ID to finish anything related to the thread
@@ -233,12 +233,12 @@ public class webCrawler {
             
             System.out.println("5lass ,  raowa7");
             System.out.println("size of queue = " + to_visit.size());
-            System.out.println(crawled_pages.size());
+            System.out.println(crawling_count);
         }
     }
 
     // instead of start_new_threads
-    void start_threads() {
+    boolean start_threads() {
         
         Thread ts[] = new Thread[max_threads];
         
@@ -256,7 +256,7 @@ public class webCrawler {
                 Logger.getLogger(webCrawler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+    return crawling_finished;
     }
 
     // to be implemented by luca 

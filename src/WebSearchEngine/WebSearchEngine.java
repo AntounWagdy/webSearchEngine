@@ -30,16 +30,16 @@ public class WebSearchEngine {
      * @param args the command line arguments
      */
     
-    public static void main(String [] args) throws IOException
-    {
-        Map<String,Document> m  = new HashMap<String, Document>();
-        
-        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
-      
-        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
-        Indexer I = new Indexer (m);
-        I.Execute();
-    }
+//    public static void main(String [] args) throws IOException
+//    {
+//        Map<String,Document> m  = new HashMap<String, Document>();
+//        
+//        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
+//      
+//        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
+//        Indexer I = new Indexer (m);
+//        I.Execute();
+//    }
     public static void main2(String[] args) {
         // TODO code application logic here
    

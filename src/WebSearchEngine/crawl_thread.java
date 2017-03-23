@@ -44,6 +44,7 @@ public class crawl_thread extends Thread{
             //1- check internet connectivity, if not connected work should be finished
             if(!http_handler.check_connectivity())
             {
+                System.out.println("no Internet Connection!");
                 break;
             }
 
@@ -95,7 +96,7 @@ public class crawl_thread extends Thread{
             // if !added means that connection may be lost or crawling limit is reached , so we have to break
             if(!added)
             {
-                //System.out.println("");
+                System.out.println("refused 5");
                 break;
                 //crawler.finish();
                 //return;

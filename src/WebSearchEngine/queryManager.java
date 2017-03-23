@@ -124,8 +124,8 @@ public class queryManager {
         return res;
     }
 
-    int insertinto_downloaded_page(String url, Document content) {
-        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.html().replaceAll("[^\\p{ASCII}]", "").replace("'", "\\'").replace("\"", "\\\"") + "' )";
+    int insertinto_downloaded_page(String url, Document content){
+        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.html().replaceAll("[^\\p{ASCII}]", "").replace("\'", " ").replace("\""," ") + "' )";
         res = db.insertOrUpdate(sql);
         return res;
     }

@@ -30,8 +30,8 @@ public class Program {
             
             ///////////////////////////////////// crawler part ////////////////////////////////////////////////
             int _max_threads = 5;
-            int _max_pages = 100;
-            int save_rate = 50;
+            int _max_pages = 1000;
+            int save_rate = 100;
 
             Crawler_Data_loader loader = new Crawler_Data_loader();
 
@@ -54,7 +54,7 @@ public class Program {
             //set crawling data
             crawler.set_Main_data(to_visit,visited, robots, crawled_count);
 
-            crawler.start_threads();
+            crawling_finished = crawler.start_threads();
             
             if(crawling_finished == Boolean.FALSE) // if crawler was interrupted
             {
@@ -62,10 +62,12 @@ public class Program {
                 break;
             }
             
+            Map<String, Document> pages = get_downloaded_pages();
             flush_downloaded_pages();
             System.out.println(" dddddddddddddddddddddddddddddddddddddddd");
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
             
+            break;
         }
     }
     

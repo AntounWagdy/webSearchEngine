@@ -71,7 +71,7 @@ public class httpRequestHandler {
     {
         try {
             HttpURLConnection con = (HttpURLConnection)(new URL("https://www.google.com.eg")).openConnection();
-            con.setConnectTimeout(1000);
+            con.setConnectTimeout(10000);
             con.connect();
         } catch (MalformedURLException ex) {
             //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
