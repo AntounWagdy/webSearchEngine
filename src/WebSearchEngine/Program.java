@@ -45,11 +45,11 @@ public class Program {
             webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate, crawling_finished);
 
             //set crawling data
-            crawler.set_Main_data(to_visit, visited, robots, crawled_count);
+            crawler.set_Main_data(to_visit,visited, robots, crawled_count);
 
             crawling_finished = crawler.start_threads();
 
-            if (crawling_finished == Boolean.FALSE) // if crawler was interrupted
+            if(crawling_finished == Boolean.FALSE) // if crawler was interrupted
             {
                 System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                 break;

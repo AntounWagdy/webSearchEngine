@@ -7,6 +7,11 @@ package WebSearchEngine;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsoup.nodes.Document;
@@ -305,6 +310,114 @@ public class queryManager {
         return res;
     }
 
+    int optimizedInsertIntoDocWords(int id_doc, ArrayList<String> word, String status) {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
+        for (int i = 0; i < word.size(); i++) {
+            SB.append("(\"").append(id_doc).append("\" , \"").append(word.get(i)).append("\" , \"").append(i).append("\" , \"").append(status).append("\" ),");
+        }
+        SB.setCharAt(SB.length()-1, ';');
+        sql=SB.toString();
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    int optimizedInsert_into_visited(Set<String> visited_insert)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO visited(Url)values");
+        
+        for (Iterator<String> iterator = visited_insert.iterator(); iterator.hasNext();) {
+            String next = iterator.next();
+            SB.append("(\"").append(next).append("\" ),");
+        }
+        SB.setCharAt(SB.length()-1, ';');
+        sql=SB.toString();
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    
+    int optimizedInsert_into_to_visit(Queue<String> Q)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO to_visit(doc_url)values");
+        
+        for (Iterator<String> iterator = Q.iterator(); iterator.hasNext();) {
+            String next = iterator.next();
+            SB.append("(\"").append(next).append("\"),");
+        }
+        
+        SB.setCharAt(SB.length()-1, ';');
+        sql=SB.toString();
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    int optimizedInsert_into_robots(Map<String, RobotTxtHandler> robots_insert)
+    {
+        StringBuilder R1 = new StringBuilder();
+        StringBuilder R2 = new StringBuilder();
+        R1.append("INSERT INTO robot_handler_1(host, crawl_delay) values");
+        R2.append("INSERT INTO robot_handler_2(host, url_disallowed) values");
+        
+        for (Map.Entry<String, RobotTxtHandler> entrySet : robots_insert.entrySet()) {
+            String key = entrySet.getKey();
+            RobotTxtHandler value = entrySet.getValue();
+            R1.append("(\"").append(key).append("\", \"").append(value.getCrawlDelay()).append("\"),");
+            
+            ArrayList<String> disallowed = value.getDisallowed();
+            for (Iterator<String> iterator = disallowed.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+                R2.append("(\"").append(key).append("\", \"").append(next).append("\"),");
+            }
+        }
+        R1.setCharAt(R1.length()-1, ';');
+        sql=R1.toString();
+        db.insertOrUpdate(sql);
+        
+        R2.setCharAt(R2.length()-1, ';');
+        sql = R2.toString();
+        db.insertOrUpdate(sql);
+
+        return res;        
+    }
+    
+    
+    int optimizedInsert_into_Downloaded_page(Map<String, Document> pages)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO downloaded_page(Url,page_content)values");
+        
+        for (Map.Entry<String, Document> entrySet : pages.entrySet()) {
+            String key = entrySet.getKey();
+            Document value = entrySet.getValue();
+            SB.append("(\'").append(key).append("\',\' ").append(value.html().replaceAll("[^\\p{ASCII}]", "").replace("\'", " ").replace("\"", " ")).append("\'),");
+        }
+        SB.setCharAt(SB.length()-1, ';');
+        sql = SB.toString();
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    void optimized_delete_from_visited(Set<String> visited_insert)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("delete from visited where ");
+        for (Iterator<String> iterator = visited_insert.iterator(); iterator.hasNext();) {
+            String next = iterator.next();
+            SB.append(" Url= \'").append(next).append("\' or ");
+        }
+        int last_occ = SB.lastIndexOf("or"); 
+        SB.replace(last_occ, last_occ+2, " ;");
+        sql = SB.toString();
+        try {
+            db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     //////////////////////////////////////////////////
     ResultSet select_DOCID_from_doc_words(String word, int pos, String status) {
         sql = "select ID_doc from doc_words where word ='" + word + "'  AND status ='" + status + "' AND position=" + pos;

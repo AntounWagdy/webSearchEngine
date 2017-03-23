@@ -252,32 +252,36 @@ public class webCrawler {
         queryManager qm = new queryManager();
 
         //////////////////// visited /////////////////////////
-        String urlll;
-        for (Iterator<String> it = visited_insert.iterator(); it.hasNext();) {
-            urlll = it.next();
-            qm.insertURLintoVisited(urlll);
-        }
+        qm.optimizedInsert_into_visited(visited_insert);
+//        String urlll;
+//        for (Iterator<String> it = visited_insert.iterator(); it.hasNext();) {
+//            urlll = it.next();
+//            qm.insertURLintoVisited(urlll);
+//        }
         //Don't flush now it's needed later
         //visited_insert.clear();  //flush (delete) visited set
 
         /////////////to_visit_insert/////////////////////
-        String uuurll;
-        for (int i = 0; i < to_visit_insert.size(); i++) {       // why +1  ?????
-            uuurll = to_visit_insert.remove();
-            //System.out.println(uuurll);
-            qm.insert_URL_into_to_visit(uuurll);
-
-        }
+        qm.optimizedInsert_into_to_visit(to_visit_insert);
+//        String uuurll;
+//        for (int i = 0; i < to_visit_insert.size(); i++) {       // why +1  ?????
+//            uuurll = to_visit_insert.remove();
+//            //System.out.println(uuurll);
+//            qm.insert_URL_into_to_visit(uuurll);
+//
+//        }
         ////to_visit_insert.clear();
 
         //////////////////to_visit_delete///////////////
-        String uuurl;
+        qm.optimized_delete_from_visited(visited_insert);
 
-        Iterator<String> it = visited_insert.iterator();
-        while (it.hasNext()) {
-            uuurl = it.next();
-            qm.deleteURLfrom_to_visit(uuurl);
-        }
+//        String uuurl;
+//
+//        Iterator<String> it = visited_insert.iterator();
+//        while (it.hasNext()) {
+//            uuurl = it.next();
+//            qm.deleteURLfrom_to_visit(uuurl);
+//        }
 
 //        for(int i=0; i<visited_insert.size(); i++)    // why +1  ?????
 //         {
@@ -288,33 +292,38 @@ public class webCrawler {
 //         }
         ////to_visit_delete.clear();
         ///////////////////Robot handler/////////////////
-        String host;
-        RobotTxtHandler robot_handler;
+        qm.optimizedInsert_into_robots(Robots_insert);
 
-        for (Map.Entry<String, RobotTxtHandler> entry : Robots_insert.entrySet()) {
-            host = entry.getKey();
-            robot_handler = entry.getValue();
-            qm.insertinto_robot_handler_1(host, robot_handler.getCrawlDelay());
-
-            ArrayList<String> disallowed = robot_handler.getDisallowed();
-
-            String url;
-            for (int i = 0; i < disallowed.size(); i++) {
-                url = disallowed.get(i);
-                qm.insertinto_robot_handler_2(host, url);
-            }
-        }
+//        String host;
+//        RobotTxtHandler robot_handler;
+//
+//        
+//        for (Map.Entry<String, RobotTxtHandler> entry : Robots_insert.entrySet()) {
+//            host = entry.getKey();
+//            robot_handler = entry.getValue();
+//            qm.insertinto_robot_handler_1(host, robot_handler.getCrawlDelay());
+//            
+//            ArrayList<String> disallowed = robot_handler.getDisallowed();
+//
+//            String url;
+//            for (int i = 0; i < disallowed.size(); i++) {
+//                url = disallowed.get(i);
+//                qm.insertinto_robot_handler_2(host, url);
+//            }
+//        }
         //// Robots_insert.clear();
 
         //////////////////downloade page//////////////////
-        String url_page;
-        Document content_page;
+        qm.optimizedInsert_into_Downloaded_page(crawled_insert);
 
-        for (Map.Entry<String, Document> entry : crawled_insert.entrySet()) {
-            url_page = entry.getKey();
-            content_page = entry.getValue();
-            qm.insertinto_downloaded_page(url_page, content_page);
-        }
+//        String url_page;
+//        Document content_page;
+//
+//        for (Map.Entry<String, Document> entry : crawled_insert.entrySet()) {
+//            url_page = entry.getKey();
+//            content_page = entry.getValue();
+//            qm.insertinto_downloaded_page(url_page, content_page);
+//        }
         //// crawled_insert.clear();
 
         visited_insert.clear();
