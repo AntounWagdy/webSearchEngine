@@ -50,12 +50,11 @@ public class webCrawler {
 
     Thread threads[];
 
-    public webCrawler(int _max_threads, int _max_pages, int save_rate, Boolean crawling_finished) {
+    public webCrawler(int _max_threads, int _max_pages, int save_rate) {
         //queryManager qm = new queryManager();
         max_threads = _max_threads;
         max_crawled_count = _max_pages;
         max_crawl_per_checkpt = save_rate;
-        this.crawling_finished = crawling_finished;
 
         //initialize Main data structure
         to_visit = new ConcurrentLinkedQueue();
@@ -292,8 +291,10 @@ public class webCrawler {
 //         }
         ////to_visit_delete.clear();
         ///////////////////Robot handler/////////////////
-        qm.optimizedInsert_into_robots(Robots_insert);
-
+        if(Robots_insert.size() != 0)
+        {
+            qm.optimizedInsert_into_robots(Robots_insert);
+        }
 //        String host;
 //        RobotTxtHandler robot_handler;
 //

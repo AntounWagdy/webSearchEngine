@@ -42,7 +42,7 @@ public class Program {
 
             Boolean crawling_finished = Boolean.FALSE;   //to check if the crwaler has comletely finsihed or not
             // create crawler
-            webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate, crawling_finished);
+            webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate);
 
             //set crawling data
             crawler.set_Main_data(to_visit,visited, robots, crawled_count);
@@ -56,10 +56,13 @@ public class Program {
             }
 
             Map<String, Document> pages = get_downloaded_pages();
-            //flush_downloaded_pages();
+            
+            flush_downloaded_pages();
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
-
-            break;
+            
+            Indexer indexer = new Indexer(pages);
+            indexer.Execute();
+            
         }
     }
 

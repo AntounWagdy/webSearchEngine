@@ -360,7 +360,7 @@ public class queryManager {
         StringBuilder R2 = new StringBuilder();
         R1.append("INSERT INTO robot_handler_1(host, crawl_delay) values");
         R2.append("INSERT INTO robot_handler_2(host, url_disallowed) values");
-        
+        int last_size = R2.length();
         for (Map.Entry<String, RobotTxtHandler> entrySet : robots_insert.entrySet()) {
             String key = entrySet.getKey();
             RobotTxtHandler value = entrySet.getValue();
@@ -376,10 +376,12 @@ public class queryManager {
         sql=R1.toString();
         db.insertOrUpdate(sql);
         
-        R2.setCharAt(R2.length()-1, ';');
-        sql = R2.toString();
-        db.insertOrUpdate(sql);
-
+        if(R2.length() != last_size)
+        {
+            R2.setCharAt(R2.length()-1, ';');
+            sql = R2.toString();
+            db.insertOrUpdate(sql);
+        }
         return res;        
     }
     

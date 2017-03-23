@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
 
 public class WebSearchEngine {
 
-    public static void main2(String[] args) {
+  /*  public static void main2(String[] args) {
 
         ArrayList<String> A = new ArrayList<>();
         ArrayList<String> B = new ArrayList<>();
@@ -40,8 +40,8 @@ public class WebSearchEngine {
         long elapsedTime = stopTime - startTime;
         System.out.println(elapsedTime);
     }
-
-    public static void main5(String[] args) {
+*/
+    public static void main(String[] args) {
         // TODO code application logic here
 
         /*

@@ -31,7 +31,7 @@ public class httpRequestHandler {
         try {    
             URL url = new URL(s);
             con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("HEAD");
+            //con.setRequestMethod("HEAD");
             
             //con.setConnectTimeout(10000);
             //con.setReadTimeout(10000);

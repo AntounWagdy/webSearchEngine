@@ -45,7 +45,7 @@ public class RobotTxtHandler implements Serializable{
         } catch (MalformedURLException ex) {
             Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
+           // Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
