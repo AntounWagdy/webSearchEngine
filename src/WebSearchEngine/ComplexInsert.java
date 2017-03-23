@@ -14,14 +14,22 @@ public class ComplexInsert {
         SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
     }
 
-    void add(int id_doc, ArrayList<String> word, String status) {
+    void add(long id_doc, ArrayList<String> word, String status) {
         for (int i = 0; i < word.size(); i++) {
             SB.append("(\"").append(id_doc).append("\" , \"").append(word.get(i)).append("\" , \"").append(i).append("\" , \"").append(status).append("\" ),");
         }
     }
 
+    void addParsed(long id_doc, ArrayList<String> dataArr) {
+        String[] parsed;
+        for (String data : dataArr) {
+            parsed = data.split(" ");
+            SB.append("(\"").append(id_doc).append("\" , \"").append(parsed[0]).append("\" , \"").append(parsed[2]).append("\" , \"").append(parsed[1]).append("\" ),");
+        }
+    }
+
     int Execute() {
-        databaseManager DM = null;
+        databaseManager DM;
         SB.setCharAt(SB.length() - 1, ';');
         try {
             DM = new databaseManager();
@@ -32,5 +40,4 @@ public class ComplexInsert {
         }
         return -1;
     }
-
 }

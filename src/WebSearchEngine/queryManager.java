@@ -7,7 +7,6 @@ package WebSearchEngine;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsoup.nodes.Document;
@@ -300,24 +299,12 @@ public class queryManager {
     }
 
     /////////////////////////////////////////////////////
-    int insertinto_doc_words(int id_doc, String word, int pos, String status) {
+    int insertinto_doc_words(long id_doc, String word, int pos, String status) {
         sql = "INSERT INTO doc_words(ID_doc,word,position,status)values(\"" + id_doc + "\" , \"" + word + "\" , \"" + pos + "\" , \"" + status + "\" );";
         res = db.insertOrUpdate(sql);
         return res;
     }
 
-    int optimizedInsertIntoDocWords(int id_doc, ArrayList<String> word, String status) {
-        StringBuilder SB = new StringBuilder();
-        SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
-        for (int i = 0; i < word.size(); i++) {
-            SB.append("(\"").append(id_doc).append("\" , \"").append(word.get(i)).append("\" , \"").append(i).append("\" , \"").append(status).append("\" ),");
-        }
-        SB.setCharAt(SB.length()-1, ';');
-        sql=SB.toString();
-        res = db.insertOrUpdate(sql);
-        return res;
-    }
-    
     //////////////////////////////////////////////////
     ResultSet select_DOCID_from_doc_words(String word, int pos, String status) {
         sql = "select ID_doc from doc_words where word ='" + word + "'  AND status ='" + status + "' AND position=" + pos;
@@ -342,5 +329,47 @@ public class queryManager {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ID_integer;
+    }
+
+    ResultSet selectAllIndexedDocuments() {
+        sql = "SELECT document.Url FROM search_engine.document;";
+        try {
+            myRes = db.select(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return myRes;
+    }
+
+    boolean delete_document(String url) {
+        sql = "delete FROM search_engine.document where document.Url=\"" + url + "\";";
+        try {
+            return db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    ResultSet selectAllWordsByDocId(long doc_id) {
+        sql = "Select word,position,status from search_engine.doc_words where doc_words.ID_doc =\"" + doc_id + "\";";
+        try {
+            myRes = db.select(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return myRes;
+    }
+
+    Boolean deleteWordbyID(long Doc_id,String word, String status, String position) {
+        sql = "delete FROM search_engine.doc_words where word = \""+word+"\" and position = \""+position+"\" and "
+                + "status =\""+status+"\" and ID_doc = \""+Doc_id+"\";";
+        try {
+            flag = db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return flag;
+
     }
 }

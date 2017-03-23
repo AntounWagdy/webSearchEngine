@@ -21,17 +21,17 @@ public class WebSearchEngine {
         for (int i = 0; i < 10; i++) {
             B.add("" + i);
         }
-
-        AlgebricSets as = new AlgebricSets(A, B);
-        System.out.println(as.aDiffb());
+        System.out.println(AlgebricSets.aDiffb(A,B));
     }
 
     public static void main(String[] args) throws IOException {
         Map<String, Document> m = new HashMap<>();
 
-        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
+        String x ="https://en.wikipedia.org/wiki/Parthenon" ;
+        Document Doc = Jsoup.connect(x).get();
 
-        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
+        
+        m.put(x, Doc);
         Indexer I = new Indexer(m);
         long startTime = System.currentTimeMillis();
         I.Execute();
@@ -41,7 +41,7 @@ public class WebSearchEngine {
         System.out.println(elapsedTime);
     }
 
-    public static void main3(String[] args) {
+    public static void main5(String[] args) {
         // TODO code application logic here
 
         /*

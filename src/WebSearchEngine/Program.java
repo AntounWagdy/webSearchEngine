@@ -7,6 +7,7 @@ package WebSearchEngine;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -20,12 +21,9 @@ import org.jsoup.nodes.Document;
  * @author Amr
  */
 public class Program {
-    
-    
-    void run_search_Engine()
-    {
-        while(true)
-        {            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
+
+    void run_search_Engine() {
+        while (true) {            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
             int _max_threads = 5;
             int _max_pages = 5000;
             int save_rate = 100;
@@ -37,65 +35,57 @@ public class Program {
             Map<String, RobotTxtHandler> robots = loader.get_robot_handlers();
             int crawled_count = loader.get_crawled_count();
 
-            if(to_visit.size() == 0)
-            {
+            if (to_visit.size() == 0) {
                 to_visit.add("https://www.tutorialspoint.com");
                 to_visit.add("https://en.wikipedia.org/wiki/Main_Page");
             }
-
 
             Boolean crawling_finished = Boolean.FALSE;   //to check if the crwaler has comletely finsihed or not
             // create crawler
             webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate, crawling_finished);
 
             //set crawling data
-            crawler.set_Main_data(to_visit,visited, robots, crawled_count);
+            crawler.set_Main_data(to_visit, visited, robots, crawled_count);
 
             crawling_finished = crawler.start_threads();
-            
-            if(crawling_finished == Boolean.FALSE) // if crawler was interrupted
+
+            if (crawling_finished == Boolean.FALSE) // if crawler was interrupted
             {
                 System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                 break;
             }
-            
+
             Map<String, Document> pages = get_downloaded_pages();
             //flush_downloaded_pages();
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
-            
-            
+
             break;
         }
     }
-    
-    
-    
-    Map<String, Document> get_downloaded_pages()
-    {
+
+    Map<String, Document> get_downloaded_pages() {
         queryManager qm = new queryManager();
-        
+
         ResultSet rs = qm.select_downloaded_pages();
-        
-        Map<String, Document> url_Doc = null;
-        
+
+        Map<String, Document> url_Doc = new HashMap();
+
         try {
             while (rs.next()) {
                 String url = rs.getString("Url");
                 Document Doc = Jsoup.parse(rs.getString("page_content"));
-                
+                url_Doc.put(url, Doc);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return url_Doc;       
+
+        return url_Doc;
     }
-    
-    
-    void flush_downloaded_pages()
-    {
+
+    void flush_downloaded_pages() {
         queryManager qm = new queryManager();
-        
+
         qm.delete_all_from_downloaded_pages();
     }
 }
