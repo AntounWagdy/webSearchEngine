@@ -15,14 +15,6 @@ public class PorterStemmer {
     private int V[]; // number of vowels for each substring
     static Map<String, String> Stemms = new HashMap<>(); // A map to savee the words stemmed before
 
-    ArrayList<String> StemArr(ArrayList<String> data) {
-        ArrayList<String> res = new ArrayList<>();
-        for (String Text : data) {
-            res.addAll(this.StemText(Text));
-        }
-        return res;
-    }
-
     ArrayList<String> StemText(String Text) {
         ArrayList<String> res = new ArrayList<>();
         Text = Text.trim().toLowerCase();

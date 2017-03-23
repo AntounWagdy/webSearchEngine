@@ -124,8 +124,8 @@ public class queryManager {
         return res;
     }
 
-    int insertinto_downloaded_page(String url, Document content){
-        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.html().replaceAll("[^\\p{ASCII}]", "").replace("\'", " ").replace("\""," ") + "' )";
+    int insertinto_downloaded_page(String url, Document content) {
+        sql = "INSERT INTO downloaded_page(Url,page_content)values('" + url + "' , '" + content.html().replaceAll("[^\\p{ASCII}]", "").replace("'", "\\'").replace("\"", "\\\"") + "' )";
         res = db.insertOrUpdate(sql);
         return res;
     }
@@ -311,15 +311,10 @@ public class queryManager {
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
         for (int i = 0; i < word.size(); i++) {
-            SB.append("(\"" + id_doc + "\" , \"" + word.get(i) + "\" , \"" + i + "\" , \"" + status + "\" ),");
+            SB.append("(\"").append(id_doc).append("\" , \"").append(word.get(i)).append("\" , \"").append(i).append("\" , \"").append(status).append("\" ),");
         }
         SB.setCharAt(SB.length()-1, ';');
         sql=SB.toString();
-        /*
-        System.out.println(sql);
-        System.out.println("");
-        System.out.println("");
-        */       
         res = db.insertOrUpdate(sql);
         return res;
     }

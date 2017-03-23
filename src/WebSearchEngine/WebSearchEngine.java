@@ -1,45 +1,41 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package WebSearchEngine;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
- /*
- * @author Amr
- */
 public class WebSearchEngine {
-
-    /**
-     * @param args the command line arguments
-     */
     
-//    public static void main(String [] args) throws IOException
-//    {
-//        Map<String,Document> m  = new HashMap<String, Document>();
-//        
-//        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
-//      
-//        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
-//        Indexer I = new Indexer (m);
-//        I.Execute();
-//    }
+    public static void main(String []args){
+        ArrayList<String> A = new ArrayList<>();
+        ArrayList<String> B = new ArrayList<>();
+        
+        for(int i = 10 ; i < 20 ; i++){
+            A.add(""+i);
+        }
+        
+        for(int i = 0 ; i < 10 ; i++){
+            B.add(""+i);
+        }
+        
+        AlgebricSets as = new AlgebricSets(A, B);
+        System.out.println(as.aDiffb());
+    }
+    
+    public static void main3(String [] args) throws IOException
+    {
+        Map<String,Document> m  = new HashMap<String, Document>();
+        
+        Document Doc = Jsoup.connect("https://en.wikipedia.org/wiki/PageRank").get();
+      
+        m.put("https://en.wikipedia.org/wiki/PageRank", Doc);
+        Indexer I = new Indexer (m);
+        I.Execute();
+    }
     public static void main2(String[] args) {
         // TODO code application logic here
    
