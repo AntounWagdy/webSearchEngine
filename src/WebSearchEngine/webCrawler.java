@@ -77,14 +77,14 @@ public class webCrawler {
                 URL url = new URL(urlString);
                 URL base = new URL(url.getProtocol() + "://" + url.getHost() + (url.getPort() > -1 ? ":" + url.getPort() : ""));
 
-                if (!RobotHandlers.containsKey(base.toString())) //first create handler if it does not exist
+                if (!RobotHandlers.containsKey(base.getHost())) //first create handler if it does not exist
                 {
                     RobotTxtHandler H = new RobotTxtHandler(base);
-                    RobotHandlers.put(base.toString(), H);
-                    Robots_insert.put(base.toString(), H);
+                    RobotHandlers.put(base.getHost(), H);
+                    Robots_insert.put(base.getHost(), H);
                 }
 
-                RobotTxtHandler RH = RobotHandlers.get(base.toString());
+                RobotTxtHandler RH = RobotHandlers.get(base.getHost());
 
                 /*return true if it is not in disallowed or even if it is in
                  *disallowed but allowed for this agent
