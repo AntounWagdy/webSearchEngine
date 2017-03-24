@@ -23,7 +23,24 @@ import org.jsoup.nodes.Document;
 public class Program {
 
     void run_search_Engine() {
-        while (true) {            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
+        while (true) {            
+        ///////////////////////////////// check intenet and database connections /////////////////////////
+            httpRequestHandler h = new httpRequestHandler();
+            if(!h.check_Internet_connectivity())
+            {
+                System.err.println("no internet connection , try again later");
+                break;
+            }
+            
+            try {
+                databaseManager DBM = new databaseManager();   
+            } catch (Exception e) {
+                System.err.println("Check database server, no connection");
+                break;
+            }
+            
+            
+        ///////////////////////////////////// crawler part ////////////////////////////////////////////////
             int _max_threads = 5;
             int _max_pages = 5000;
             int save_rate = 100;
