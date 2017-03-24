@@ -68,9 +68,8 @@ public class crawl_thread extends Thread{
 
 
             //4- check robot disallow
-            if(!crawler.checkRobotTxt(top.toString()))
-            {
-                System.out.println("refused 3");
+            if(!crawler.checkRobotTxt(top)){
+                System.out.println("refused in the Robots.txt");
                 continue;
                 //crawler.finish();
                 //return;

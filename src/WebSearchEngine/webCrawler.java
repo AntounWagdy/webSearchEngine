@@ -87,9 +87,16 @@ public class webCrawler {
                 RobotTxtHandler RH = RobotHandlers.get(base.toString());
 
                 /*return true if it is not in disallowed or even if it is in
-             *disallowed but allowed for this agent
+                 *disallowed but allowed for this agent
                  */
-                return !RH.getDisallowed().contains(urlString);
+                ArrayList<String> Disallowed = RH.getDisallowed();
+                
+                for(String dis:Disallowed){
+                    if(urlString.matches(dis))
+                        return false;
+                }
+                
+                return true;
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(webCrawler.class.getName()).log(Level.SEVERE, null, ex);
@@ -167,7 +174,6 @@ public class webCrawler {
         return visited.contains(url);
     }
      */
-
 //    synchronized boolean set_visited(URL url) {
 //        if (!visited.contains(url)) {
 //            return visited.add(url);
@@ -281,7 +287,6 @@ public class webCrawler {
 //            uuurl = it.next();
 //            qm.deleteURLfrom_to_visit(uuurl);
 //        }
-
 //        for(int i=0; i<visited_insert.size(); i++)    // why +1  ?????
 //         {
 //             uuurl=visited_insert.remove().toString();
@@ -291,8 +296,7 @@ public class webCrawler {
 //         }
         ////to_visit_delete.clear();
         ///////////////////Robot handler/////////////////
-        if(Robots_insert.size() != 0)
-        {
+        if (Robots_insert.size() != 0) {
             qm.optimizedInsert_into_robots(Robots_insert);
         }
 //        String host;
@@ -326,7 +330,6 @@ public class webCrawler {
 //            qm.insertinto_downloaded_page(url_page, content_page);
 //        }
         //// crawled_insert.clear();
-
         visited_insert.clear();
         to_visit_insert.clear();
         Robots_insert.clear();

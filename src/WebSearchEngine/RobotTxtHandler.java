@@ -6,33 +6,26 @@
 package WebSearchEngine;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RobotTxtHandler implements Serializable{
+public class RobotTxtHandler implements Serializable {
 
     private String userAgent = "Googlebot";
     private URL base;
     private BufferedReader robotData;
     private ArrayList<String> Disallow;
-    private Integer crawlDelay=0;  // default
-    private long last_time_stamp=0;
+    private Integer crawlDelay = 0;  // default value
+    private long last_time_stamp = 0;
 
-    /* Preparing the URL to Connect to */
+    /* Preparing the URL to Connect to*/
     public RobotTxtHandler(URL url) {
         try {
             Disallow = new ArrayList<>();
@@ -45,21 +38,18 @@ public class RobotTxtHandler implements Serializable{
         } catch (MalformedURLException ex) {
             Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-           // Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
-    public RobotTxtHandler(int c_delay, ArrayList<String> DisA)
-    {
+    public RobotTxtHandler(int c_delay, ArrayList<String> DisA) {
         crawlDelay = c_delay;
         Disallow = DisA;
-        
     }
-    
-    
+
     private void extractData() {
         String inputLine;
+        String temp;
         String[] inputLineArr = {null, null};
         try {
             while ((inputLine = robotData.readLine()) != null) {
@@ -70,15 +60,16 @@ public class RobotTxtHandler implements Serializable{
                             if (inputLineArr[1] == null) {
                                 // accept all (do nothing)
                             } else if (inputLineArr[1].equals("/")) {
-                                // Refuse all
-                                //TODO:what to do
+                                temp = (base + inputLineArr[1].trim() + "(.*)");
+                                Disallow.add(temp);
                             } else {
-                                Disallow.add((base + inputLineArr[1].trim()).toString());
+                                temp = (base + inputLineArr[1].trim());
+                                temp = temp.replace("*", "(.*)").replace("?", "\\?").replace("+", "\\+");
+                                temp += "(.*)";
+                                Disallow.add(temp);
                             }
                         } else if (inputLineArr[0].equals("Crawl-delay:")) {
                             crawlDelay = Integer.parseInt(inputLineArr[1]);
-                        //} else if (inputLineArr[0].equals("Allow:")) {
-                          //  Allow.add(new URL(base + inputLineArr[1].trim()));
                         }
                     }
                 }
@@ -100,27 +91,19 @@ public class RobotTxtHandler implements Serializable{
         return Disallow;
     }
 
-//    public ArrayList<URL> getAllowed() {
-//        return Allow;
-//    }
-
     public Integer getCrawlDelay() {
         return crawlDelay;
     }
-    
-    
-    public synchronized void wait_for_crawl_delay(long current_time)
-    {
-        if(crawlDelay == 0) // when equal =0  , this means that we shouldn't care about it
-            return;
-        
-        if(current_time - last_time_stamp >crawlDelay)
-        {
-            last_time_stamp = current_time;
+
+    public synchronized void wait_for_crawl_delay(long current_time) {
+        if (crawlDelay == 0) { // when equal =0  , this means that we shouldn't care about it
             return;
         }
-        else
-        {
+
+        if (current_time - last_time_stamp > crawlDelay) {
+            last_time_stamp = current_time;
+            return;
+        } else {
             try {
                 Thread.sleep(crawlDelay);
             } catch (InterruptedException ex) {
@@ -128,32 +111,5 @@ public class RobotTxtHandler implements Serializable{
             }
             last_time_stamp = current_time;
         }
-        
     }
-    
-   /* @Override
-    public String toString()
-    {
-        
-        
-        
-        StringBuffer data = new StringBuffer();
-        data.append(base.toString()+"\n");
-        try {
-           
-            String line;
-            while ((line = temp.readLine()) != null) {
-                data.append(line+"\n");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(RobotTxtHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-
-        
-        
-        RobotTxtHandler gh = new RobotTxtHandler(data.toString());
-        return data.toString();
-    }
-    */
 }
-

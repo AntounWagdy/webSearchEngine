@@ -35,9 +35,10 @@ public class Program {
             Map<String, RobotTxtHandler> robots = loader.get_robot_handlers();
             int crawled_count = loader.get_crawled_count();
 
-            if (to_visit.size() == 0) {
+            if (to_visit.isEmpty()) {
                 to_visit.add("https://www.tutorialspoint.com");
                 to_visit.add("https://en.wikipedia.org/wiki/Main_Page");
+
             }
 
             Boolean crawling_finished = Boolean.FALSE;   //to check if the crwaler has comletely finsihed or not
@@ -45,24 +46,24 @@ public class Program {
             webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate);
 
             //set crawling data
-            crawler.set_Main_data(to_visit,visited, robots, crawled_count);
+            crawler.set_Main_data(to_visit, visited, robots, crawled_count);
 
             crawling_finished = crawler.start_threads();
 
-            if(crawling_finished == Boolean.FALSE) // if crawler was interrupted
+            if (crawling_finished == Boolean.FALSE) // if crawler was interrupted
             {
                 System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                 break;
             }
 
             Map<String, Document> pages = get_downloaded_pages();
-            
+
             flush_downloaded_pages();
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
-            
+
             Indexer indexer = new Indexer(pages);
             indexer.Execute();
-            
+
         }
     }
 
