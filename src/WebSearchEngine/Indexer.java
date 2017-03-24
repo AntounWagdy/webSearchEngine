@@ -39,10 +39,10 @@ public class Indexer {
             }
             ArrayList<String> del = AlgebricSets.aDiffb(oldData, newData);
             ArrayList<String> ins = AlgebricSets.aDiffb(newData, oldData);
-            System.out.println("To be deleted : "+del);
-            System.out.println("To be inserted : "+ins);
+            System.out.println("To be deleted : " + del);
+            System.out.println("To be inserted : " + ins);
             System.out.println();
-            
+
             for (String url : ins) {
                 Q.insertinto_document(url);
             }
@@ -61,46 +61,52 @@ public class Indexer {
                 ResultSet Res = Q.selectAllWordsByDocId(doc_id);
                 try {
                     while (Res.next()) {
-                        oldData.add(Res.getString("word")+" " +Res.getString("status")+" "+Res.getString("position"));
+                        oldData.add(Res.getString("word") + " " + Res.getString("status") + " " + Res.getString("position"));
                     }
                 } catch (SQLException ex) {
                     Logger.getLogger(Indexer.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 /*extract new words from document*/
-                ArrayList<String>temp = new ArrayList<>();
-                String[] tags = {"title","ul", "ol", "table", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
+                ArrayList<String> temp = new ArrayList<>();
+                String[] tags = {"title", "ul", "ol", "table", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
                 for (int i = 0; i < tags.length; i++) {
                     /*Stem the above tags*/
                     Elements E = entry.getValue().select(tags[i]);
                     for (int k = 0; k < E.size(); k++) {
                         temp = PS.StemText(E.get(k).text());
-                        for(int j = 0 ; j < temp.size();j++){
-                            newData.add(temp.get(j)+" "+tags[i]+"_"+k + " "+j);
+                        for (int j = 0; j < temp.size(); j++) {
+                            newData.add(temp.get(j) + " " + tags[i] + "_" + k + " " + j);
                         }
                     }
                 }
                 del = AlgebricSets.aDiffb(oldData, newData);
                 ins = AlgebricSets.aDiffb(newData, oldData);
-                System.out.println("To be deleted : "+del);
-                System.out.println("To be inserted : "+ins);
-                String[]dataArr;
-                for(String data:del){
+                System.out.println("To be deleted : " + del);
+                System.out.println("To be inserted : " + ins);
+                String[] dataArr;
+                for (String data : del) {
                     dataArr = data.split(" ");
-                    Q.deleteWordbyID(doc_id,dataArr[0],dataArr[1],dataArr[2]);//word , status , position
+                    Q.deleteWordbyID(doc_id, dataArr[0], dataArr[1], dataArr[2]);//word , status , position
                 }
                 ComplexInsert stmt = new ComplexInsert();
-                stmt.addParsed(doc_id, ins);
-                stmt.Execute();
+
+                if (!ins.isEmpty()) {
+                    stmt.addParsed(doc_id, ins);
+                    stmt.Execute();
+                }
             }
         } else {
-            CreateDbFromScratsh();
+            CreateDbFromScratch();
         }
     }
 
-    private void CreateDbFromScratsh() {
+    private void CreateDbFromScratch() {
+        System.out.println("Indexer has started from scratch");
         queryManager Q = new queryManager();
         PorterStemmer PS = new PorterStemmer();
         long doc_id;
+
+        int lol = 0;
 
         for (Map.Entry<String, Document> entry : dataMap.entrySet()) {
             Q.insertinto_document(entry.getKey());
@@ -108,7 +114,7 @@ public class Indexer {
             ArrayList<String> res;
             /*1- Stem and insert the title*/
             /*2- Stem any thing else*/
-            String[] tags = {"title","ul", "ol", "table", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
+            String[] tags = {"title", "ul", "ol", "table", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
             ComplexInsert stmt = new ComplexInsert();
 
             for (int i = 0; i < tags.length; i++) {
@@ -121,9 +127,9 @@ public class Indexer {
                         stmt.add(doc_id, res, tags[i] + "_" + k);
                     }
                 }
-                System.out.println(tags[i] + " has finished B-)");
             }
             stmt.Execute();
+            System.out.println((++lol) + " document has served");
         }
     }
 }

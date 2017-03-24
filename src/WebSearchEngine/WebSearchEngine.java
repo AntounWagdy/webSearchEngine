@@ -42,15 +42,7 @@ public class WebSearchEngine {
     }
 */
     public static void main(String[] args) {
-        // TODO code application logic here
-
-        /*
-        URL_NORMALIZER n = new URL_NORMALIZER("https://wikipedia.org/wiki/Wikipedia:Featured_topics");
-        
-        String s = n.normalize();
-         */
         Program crawler_and_indexer = new Program();
-
         crawler_and_indexer.run_search_Engine();
     }
 }

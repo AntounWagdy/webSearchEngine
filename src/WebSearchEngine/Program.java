@@ -24,6 +24,7 @@ public class Program {
 
     void run_search_Engine() {
         while (true) {            ///////////////////////////////////// crawler part ////////////////////////////////////////////////
+            /*
             int _max_threads = 5;
             int _max_pages = 5000;
             int save_rate = 100;
@@ -55,12 +56,11 @@ public class Program {
                 System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                 break;
             }
-
+             */
             Map<String, Document> pages = get_downloaded_pages();
 
-            flush_downloaded_pages();
+            //flush_downloaded_pages();
             ///////////////////////////////////// indexer part ///////////////////////////////////////////////
-
             Indexer indexer = new Indexer(pages);
             indexer.Execute();
 
@@ -74,10 +74,14 @@ public class Program {
 
         Map<String, Document> url_Doc = new HashMap();
 
+        Document Doc;
+        String url;
+        int i =0 ; 
         try {
             while (rs.next()) {
-                String url = rs.getString("Url");
-                Document Doc = Jsoup.parse(rs.getString("page_content"));
+                System.out.println("getting the document number "+(++i));
+                url = rs.getString("Url");
+                Doc = Jsoup.parse(rs.getString("page_content"));
                 url_Doc.put(url, Doc);
             }
         } catch (SQLException ex) {

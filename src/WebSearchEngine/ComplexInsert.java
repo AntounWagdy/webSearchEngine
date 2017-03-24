@@ -31,6 +31,8 @@ public class ComplexInsert {
     int Execute() {
         databaseManager DM;
         SB.setCharAt(SB.length() - 1, ';');
+        
+        System.out.println(SB.toString());
         try {
             DM = new databaseManager();
             return DM.insertOrUpdate(SB.toString());

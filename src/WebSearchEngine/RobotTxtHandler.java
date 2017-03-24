@@ -50,14 +50,14 @@ public class RobotTxtHandler implements Serializable {
     private void extractData() {
         String inputLine;
         String temp;
-        String[] inputLineArr = {null, null};
+        String[] inputLineArr;
         try {
             while ((inputLine = robotData.readLine()) != null) {
                 if (inputLine.equals("User-agent: *") || inputLine.equals("User-agent: " + userAgent)) {
                     while ((inputLine = robotData.readLine()) != null && !inputLine.matches("User-agent:(.*)")) {
                         inputLineArr = inputLine.split(" ");
                         if (inputLineArr[0].equals("Disallow:")) {
-                            if (inputLineArr[1] == null) {
+                            if (inputLineArr.length < 2) {
                                 // accept all (do nothing)
                             } else if (inputLineArr[1].equals("/")) {
                                 temp = (base + inputLineArr[1].trim() + "(.*)");
