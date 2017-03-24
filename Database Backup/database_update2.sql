@@ -29,7 +29,7 @@ CREATE TABLE `doc_words` (
   `key` bigint(8) NOT NULL AUTO_INCREMENT,
   `status` longtext NOT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=39012 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +52,7 @@ CREATE TABLE `document` (
   `docId` int(11) NOT NULL AUTO_INCREMENT,
   `Url` longtext NOT NULL,
   PRIMARY KEY (`docId`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +76,7 @@ CREATE TABLE `downloaded_page` (
   `page_content` longtext NOT NULL,
   `Url` longtext NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=553 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -86,30 +86,6 @@ CREATE TABLE `downloaded_page` (
 LOCK TABLES `downloaded_page` WRITE;
 /*!40000 ALTER TABLE `downloaded_page` DISABLE KEYS */;
 /*!40000 ALTER TABLE `downloaded_page` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `host_robot_handler`
---
-
-DROP TABLE IF EXISTS `host_robot_handler`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `host_robot_handler` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `host` longtext NOT NULL,
-  `robot_handler` longtext NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `host_robot_handler`
---
-
-LOCK TABLES `host_robot_handler` WRITE;
-/*!40000 ALTER TABLE `host_robot_handler` DISABLE KEYS */;
-/*!40000 ALTER TABLE `host_robot_handler` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -124,7 +100,7 @@ CREATE TABLE `robot_handler_1` (
   `host` longtext NOT NULL,
   `crawl_delay` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -149,7 +125,7 @@ CREATE TABLE `robot_handler_2` (
   `url_disallowed` varchar(2000) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `host_idx` (`host`)
-) ENGINE=InnoDB AUTO_INCREMENT=2665 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=875 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +148,7 @@ CREATE TABLE `to_visit` (
   `doc_url` longtext NOT NULL,
   `docID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`docID`)
-) ENGINE=InnoDB AUTO_INCREMENT=4740 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4516 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,7 +171,7 @@ CREATE TABLE `visited` (
   `Url_Id` int(11) NOT NULL AUTO_INCREMENT,
   `Url` longtext NOT NULL,
   PRIMARY KEY (`Url_Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=525 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=326 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,4 +192,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-23 17:38:34
+-- Dump completed on 2017-03-24 16:01:34
