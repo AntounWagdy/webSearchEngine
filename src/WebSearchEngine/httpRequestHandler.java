@@ -58,7 +58,8 @@ public class httpRequestHandler {
             System.out.println("Site is unreachable");
         } 
         catch (IOException ex) {
-            Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //return false;
         }
         
         con.disconnect();
@@ -71,7 +72,7 @@ public class httpRequestHandler {
     {
         try {
             HttpURLConnection con = (HttpURLConnection)(new URL("https://www.google.com.eg")).openConnection();
-            con.setConnectTimeout(10000);
+            con.setConnectTimeout(5000);
             con.connect();
         } catch (MalformedURLException ex) {
             //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);

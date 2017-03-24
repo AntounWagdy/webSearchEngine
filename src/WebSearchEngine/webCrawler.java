@@ -31,7 +31,7 @@ public class webCrawler {
     int max_crawled_count;  // max to be crawled
     int max_crawl_per_checkpt;  // number of pages to be crawled between two checkpoints
     int crawling_count;    // number of crawled pages till now
-    Boolean crawling_finished;   // if the crawling phase has completely finished, this boolean will be set
+    Boolean crawling_finished = false;   // if the crawling phase has completely finished, this boolean will be set
     Queue<String> to_visit;
     Set<String> visited;     // elemnts here means that those URLs are already popped out from queue
 //    Map<String, Document> crawled_pages;   // map key = URL,, value= page text 
