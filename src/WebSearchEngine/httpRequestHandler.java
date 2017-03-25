@@ -1,7 +1,6 @@
 package WebSearchEngine;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
@@ -132,21 +131,5 @@ public class httpRequestHandler {
     Document get_doc()
     {
         return Doc;
-    }
-      
-
-    /*
-    String getBody() {
-        String s =Doc.body().text();
-        String r = null;
-        try {
-            r = new String(s.getBytes(), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            return r;
-        }
-*/
-    
-    
+    }  
 }

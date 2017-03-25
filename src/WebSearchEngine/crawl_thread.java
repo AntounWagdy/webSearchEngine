@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import org.jsoup.nodes.Document;
 
 
-/**
- *
- * @author Amr
- */
 public class crawl_thread extends Thread{
     webCrawler crawler;
     httpRequestHandler http_handler;

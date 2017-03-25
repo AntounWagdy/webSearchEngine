@@ -1,46 +1,34 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package WebSearchEngine;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-/**
- *
- * @author Amr
- */
 public class Program {
 
     void run_search_Engine() {
-        while (true) {            
-        ///////////////////////////////// check intenet and database connections /////////////////////////
+
+        Indexer indexer = new Indexer();
+        Map<String, Document> pages;
+
+        while (true) {
+            /*Checking internet Connctivity*/
+            /*
             httpRequestHandler h = new httpRequestHandler();
-            if(!h.check_Internet_connectivity())
-            {
+            if (!h.check_Internet_connectivity()) {
                 System.err.println("no internet connection , try again later");
                 break;
             }
-            
+
             try {
-                databaseManager DBM = new databaseManager();   
+                databaseManager DBM = databaseManager.getInstance();
             } catch (Exception e) {
                 System.err.println("Check database server, no connection");
                 break;
             }
-            
-            
-        ///////////////////////////////////// crawler part ////////////////////////////////////////////////
+
+            //Crawling
             int _max_threads = 5;
             int _max_pages = 5000;
             int save_rate = 100;
@@ -67,48 +55,26 @@ public class Program {
 
             crawling_finished = crawler.start_threads();
 
-            if (crawling_finished == Boolean.FALSE) // if crawler was interrupted
+            if (!crawling_finished) // if crawler was interrupted
             {
                 System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                 break;
             }
-            Map<String, Document> pages = get_downloaded_pages();
+            */
+            /*Indexer Part*/
+            pages = this.get_portion_of_downloaded_pages();
+            indexer.setTarget();
 
-            flush_downloaded_pages();
-            ///////////////////////////////////// indexer part ///////////////////////////////////////////////
-            Indexer indexer = new Indexer(pages);
-            indexer.Execute();
-
-        }
-    }
-
-    Map<String, Document> get_downloaded_pages() {
-        queryManager qm = new queryManager();
-
-        ResultSet rs = qm.select_downloaded_pages();
-
-        Map<String, Document> url_Doc = new HashMap();
-
-        Document Doc;
-        String url;
-        int i =0 ; 
-        try {
-            while (rs.next()) {
-                System.out.println("getting the document number "+(++i));
-                url = rs.getString("Url");
-                Doc = Jsoup.parse(rs.getString("page_content"));
-                url_Doc.put(url, Doc);
+            while (!pages.isEmpty()) {
+                indexer.setDataMap(pages);
+                indexer.Execute();
+                pages = this.get_portion_of_downloaded_pages();
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            break;
         }
-
-        return url_Doc;
     }
 
-    void flush_downloaded_pages() {
-        queryManager qm = new queryManager();
-
-        qm.delete_all_from_downloaded_pages();
+    Map<String, Document> get_portion_of_downloaded_pages() {
+        return new queryManager().select_and_delete_pages_by_limit(200);
     }
 }

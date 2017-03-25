@@ -75,7 +75,7 @@ public class URL_NORMALIZER {
             StringBuilder sb = new StringBuilder();
             for(int i=1; i<domain_names.length; i++)
             {  
-                sb.append(domain_names[i]+".");
+                sb.append(domain_names[i]).append(".");
             }
             sb.deleteCharAt(sb.length()-1);
             

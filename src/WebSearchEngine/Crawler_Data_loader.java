@@ -1,17 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package WebSearchEngine;
 
-import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -21,10 +12,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Amr
- */
 public class Crawler_Data_loader {
     queryManager qm;
     
@@ -50,7 +37,7 @@ public class Crawler_Data_loader {
     Queue get_to_visit_urls() {
         
         ResultSet rs = qm.selectdUrl_from_to_visit();
-        Queue<String> q = new ConcurrentLinkedQueue<String>();
+        Queue<String> q = new ConcurrentLinkedQueue<>();
         try {
             while (rs.next()) {
             q.add(rs.getString("doc_url"));

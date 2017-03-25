@@ -5,12 +5,7 @@
  */
 package WebSearchEngine;
 
-/**
- *
- * @author Malak Fahim
- */
-import java.io.IOException;
-import java.sql.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,16 +21,28 @@ public class databaseManager {
     ResultSet myRes = null;       //for select query
     int res;    //for insert query
     boolean flag; //for delete query
-
-    //try
-    //{
     String userDatabase = "root";   //username and password elly katabtohom w enta bt install mysql
     String passDatabase = "root";
 
-    public databaseManager() throws SQLException {
+    static private databaseManager DBM = null;
+
+    private databaseManager() throws SQLException {
         myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/search_engine?autoReconnect=true&useSSL=false", userDatabase, passDatabase);
         //Create a statement
         myStatement = myCon.createStatement();
+    }
+
+    static public databaseManager getInstance() {
+        if (DBM == null) {
+            try {
+                return new databaseManager();
+            } catch (SQLException ex) {
+                Logger.getLogger(databaseManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            return DBM;
+        }
+        return null;
     }
 
     ResultSet select(String sql) throws SQLException {
@@ -43,15 +50,12 @@ public class databaseManager {
         return myRes;
     }
 
-    int insertOrUpdate(String sql)  {
-
-        
+    int insertOrUpdate(String sql) {
         try {
             res = myStatement.executeUpdate(sql);
         } catch (SQLException ex) {
             Logger.getLogger(databaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         return res;
     }
 
@@ -68,5 +72,4 @@ public class databaseManager {
             myStatement.close();
         }
     }
-
 }

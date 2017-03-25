@@ -327,7 +327,6 @@ public class PorterStemmer {
         CondStatisfied |= ends("iviti");
         if (SB.length() > 5 && !CondStatisfied && (M[SB.length() - 6] > 0 && ends("biliti"))) {
             replaceWithV("biliti", "ble");
-            return;
         }
     }
 
@@ -390,7 +389,6 @@ public class PorterStemmer {
         }
         if (ends("s")) {
             replaceWithV("s", "");
-            return;
         }
     }
 

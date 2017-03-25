@@ -1,17 +1,16 @@
 package WebSearchEngine;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ComplexInsert {
 
     StringBuilder SB;
+    databaseManager DB;
 
-    ComplexInsert() {
+    ComplexInsert(int idx) {
+        DB = databaseManager.getInstance();
         SB = new StringBuilder();
-        SB.append("INSERT INTO doc_words(ID_doc,word,position,status)values");
+        SB.append("INSERT INTO doc_words").append((idx == 2) ? "2" : "").append("(ID_doc,word,position,status)values");
     }
 
     void add(long id_doc, ArrayList<String> word, String status) {
@@ -29,17 +28,7 @@ public class ComplexInsert {
     }
 
     int Execute() {
-        databaseManager DM;
         SB.setCharAt(SB.length() - 1, ';');
-        
-        System.out.println(SB.toString());
-        try {
-            DM = new databaseManager();
-            return DM.insertOrUpdate(SB.toString());
-
-        } catch (SQLException ex) {
-            Logger.getLogger(ComplexInsert.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return -1;
+        return this.DB.insertOrUpdate(SB.toString());
     }
 }

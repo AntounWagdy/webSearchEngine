@@ -14,10 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsoup.nodes.Document;
 
-/**
- *
- * @author Antoun
- */
 public class webCrawler {
 
     // Crawler's variables and counters
@@ -240,10 +236,10 @@ public class webCrawler {
 
         /////////////update to_visit queue in the DB/////////////////////
         qm.optimizedInsert_into_to_visit(to_visit_per_CP);
-        qm.optimized_delete_from_visited(visited_per_CP);
+        qm.optimized_delete_from_to_visit(visited_per_CP);
 
         ///////////////////update Robot handlers in DB/////////////////
-        if (Robots_per_CP.size() != 0) {
+        if (!Robots_per_CP.isEmpty()) {
             qm.optimizedInsert_into_robots(Robots_per_CP);
         }
 
