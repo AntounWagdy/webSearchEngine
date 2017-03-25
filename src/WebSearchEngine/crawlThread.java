@@ -1,9 +1,12 @@
 package WebSearchEngine;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import org.jsoup.nodes.Document;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class crawlThread extends Thread {
 
@@ -50,7 +53,7 @@ public class crawlThread extends Thread {
                 URL url = new URL(top);
                 robots.get(url.getHost()).wait_for_crawl_delay(System.currentTimeMillis());
             } catch (MalformedURLException ex) {
-                Logger.getLogger(crawl_thread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(crawlThread.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             boolean downloaded = http_handler.downloadPage(top);

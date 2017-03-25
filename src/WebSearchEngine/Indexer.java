@@ -58,4 +58,8 @@ public class Indexer {
 
     }
 
+    void finish() {
+        Q.deleteDB(3 - targetDatabase);    
+    }
+
 }

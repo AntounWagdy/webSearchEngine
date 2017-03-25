@@ -81,6 +81,7 @@ public class Program {
                     count += 200;
                     System.out.println(count + " pages successfully indexed");
                 }
+                indexer.finish();
             }
             //break;
         }
