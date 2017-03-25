@@ -6,6 +6,7 @@
 package WebSearchEngine;
 
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -35,7 +36,8 @@ public class databaseManager {
     static public databaseManager getInstance() {
         if (DBM == null) {
             try {
-                return new databaseManager();
+                DBM = new databaseManager();
+                return DBM;
             } catch (SQLException ex) {
                 Logger.getLogger(databaseManager.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -64,12 +66,19 @@ public class databaseManager {
         return flag;
     }
 
-    void finish() throws SQLException {
-        if (myRes != null) {
-            myRes.close();
-        }
-        if (myStatement != null) {
-            myStatement.close();
+    void finish(){
+        try {
+            if(myCon != null){
+                myCon.close();
+            }
+            if (myRes != null) {
+                myRes.close();
+            }
+            if (myStatement != null) {
+                myStatement.close();
+            }    
+        } catch (SQLException ex) {
+            Logger.getLogger(databaseManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

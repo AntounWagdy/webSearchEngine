@@ -272,7 +272,7 @@ public class queryManager {
         SB.append("delete from to_visit where ");
         for (Iterator<String> iterator = visited_insert.iterator(); iterator.hasNext();) {
             String next = iterator.next();
-            SB.append(" Url= \'").append(next).append("\' or ");
+            SB.append(" doc_url= \'").append(next).append("\' or ");
         }
         int last_occ = SB.lastIndexOf("or");
         SB.replace(last_occ, last_occ + 2, " ;");
