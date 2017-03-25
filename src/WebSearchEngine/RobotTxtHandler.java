@@ -22,7 +22,7 @@ public class RobotTxtHandler implements Serializable {
     private URL base;
     private BufferedReader robotData;
     private ArrayList<String> Disallow;
-    private Integer crawlDelay = 0;  // default value
+    private Integer crawlDelay = 500;  // default value
     private long last_time_stamp = 0;
 
     /* Preparing the URL to Connect to*/
