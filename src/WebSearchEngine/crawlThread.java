@@ -3,15 +3,18 @@ package WebSearchEngine;
 import java.net.URL;
 import java.util.ArrayList;
 import org.jsoup.nodes.Document;
+import java.util.Map;
 
 public class crawlThread extends Thread {
 
     webCrawler crawler;
     httpRequestHandler http_handler;
+    Map<String, RobotTxtHandler> robots;
 
     public crawlThread(webCrawler c) {
         crawler = c;
         http_handler = new httpRequestHandler();
+       robots = c.get_robots();
     }
 
     @Override
@@ -43,6 +46,13 @@ public class crawlThread extends Thread {
             }
 
             //5- download, extract page body and save it
+            try {  
+                URL url = new URL(top);
+                robots.get(url.getHost()).wait_for_crawl_delay(System.currentTimeMillis());
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(crawl_thread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             boolean downloaded = http_handler.downloadPage(top);
             if (!downloaded) {
                 System.out.println("Error occured while downloading");
