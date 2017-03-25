@@ -146,6 +146,12 @@ public class webCrawler {
             return false;
         }
     }
+    
+     Map<String, RobotTxtHandler> get_robots()
+    {
+        return RobotHandlers;
+    }
+    
 
     //used to push urls into to_visit queue, to_visit_per_CP
     public boolean pushUrl(String url) {
