@@ -48,15 +48,13 @@ public class PorterStemmer {
         Step5a();
         Step5b();
 
-        
         String res = "";
         try {
             res = new String(SB.toString().getBytes(), "UTF-8");
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(PorterStemmer.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
+
         Stemms.put(S, res);
         return res;
     }

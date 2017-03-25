@@ -34,7 +34,7 @@ public class queryManager {
         this.db = databaseManager.getInstance();
     }
 
-    ResultSet select_downloaded_pages() {
+    ResultSet selectDownloadedPages() {
         sql = "SELECT Url, page_content FROM search_engine.downloaded_page order by ID ASC limit 150;";
 
         try {
@@ -56,7 +56,7 @@ public class queryManager {
         return myRes;
     }
 
-    boolean delete_all_from_downloaded_pages() {
+    boolean deleteAllFromDownloadedPages() {
         sql = "delete from downloaded_page";
         try {
             flag = db.delete(sql);
@@ -66,7 +66,7 @@ public class queryManager {
         return flag;
     }
 
-    ResultSet get_crawling_count() {
+    ResultSet getCrawlingCount() {
         sql = "SELECT count(ID) from downloaded_page";
         try {
             myRes = db.select(sql);
@@ -77,7 +77,7 @@ public class queryManager {
     }
 
     ///////////////////Update database ///////////////////
-    boolean Flush_to_visit() {
+    boolean flushToVisit() {
         sql = "delete from to_visit";
         try {
             flag = db.delete(sql);
@@ -87,7 +87,7 @@ public class queryManager {
         return flag;
     }
 
-    boolean Flush_visited() {
+    boolean flushVisited() {
         sql = "delete from visited";
         try {
             flag = db.delete(sql);
@@ -97,7 +97,7 @@ public class queryManager {
         return flag;
     }
 
-    boolean Flush_robot_1() {
+    boolean flushRobot_1() {
         sql = "delete from robot_handler_1";
         try {
             flag = db.delete(sql);
@@ -107,7 +107,7 @@ public class queryManager {
         return flag;
     }
 
-    boolean Flush_robot_2() {
+    boolean flushRobot_2() {
         sql = "delete from robot_handler_2";
         try {
             flag = db.delete(sql);
@@ -118,7 +118,7 @@ public class queryManager {
     }
 
     ////////////////////////////////////////////
-    ResultSet selectdisallowedURL_byhost(String host) {
+    ResultSet selectDisallowedURLByHost(String host) {
         sql = "select url_disallowed from robot_handler_2 where host ='" + host + "'";
         try {
             myRes = db.select(sql);
@@ -128,7 +128,7 @@ public class queryManager {
         return myRes;
     }
 
-    ResultSet selectdUrl_from_to_visit() {
+    ResultSet selectdUrlFromToVisit() {
         sql = "select doc_url from to_visit";
         try {
             myRes = db.select(sql);
@@ -138,7 +138,7 @@ public class queryManager {
         return myRes;
     }
 
-    ResultSet selectdUrl_from_visited() {
+    ResultSet selectdUrlFromVisited() {
         sql = "select Url from visited";
         try {
             myRes = db.select(sql);
@@ -148,7 +148,7 @@ public class queryManager {
         return myRes;
     }
 
-    ResultSet selectHost_from_robot_handler_1() {
+    ResultSet selectHostFromRobotHandler_1() {
 
         sql = "SELECT host, crawl_delay FROM search_engine.robot_handler_1";
         try {
@@ -160,14 +160,14 @@ public class queryManager {
     }
 
     ///////////// For Antoun /////////////////////////////////
-    int insertinto_document(String url, int index) {
+    int insertIntoDocument(String url, int index) {
         sql = "INSERT INTO document" + ((index == 2) ? "2" : "") + "(Url)values('" + url + "');";
         res = db.insertOrUpdate(sql);
         return res;
     }
     ////////////////////////////////////////////
 
-    ResultSet selectID_from_document(String url, int idx) {
+    ResultSet selectIdFromDocument(String url, int idx) {
         sql = "select docId" + ((idx == 2) ? "2" : "") + " from document" + ((idx == 2) ? "2" : "") + " where Url ='" + url + "'";
         try {
             myRes = db.select(sql);
@@ -177,10 +177,10 @@ public class queryManager {
         return myRes;
     }
 
-    int getId_from_document(String url, int idx) {
+    int getIdFromDocument(String url, int idx) {
         String ID;
         int ID_integer = 0;
-        ResultSet rs = this.selectID_from_document(url, idx);
+        ResultSet rs = this.selectIdFromDocument(url, idx);
         try {
             while (rs.next()) {              //already el Resultset will be return witne only one element
 
@@ -194,7 +194,7 @@ public class queryManager {
     }
 
     ////////////////////////////////////////////////////
-    int optimizedInsert_into_visited(Set<String> visited_insert) {
+    int optimizedInsertIntoVisited(Set<String> visited_insert) {
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO visited(Url)values");
 
@@ -208,7 +208,7 @@ public class queryManager {
         return res;
     }
 
-    int optimizedInsert_into_to_visit(Queue<String> Q) {
+    int optimizedInsertIntoToVisit(Queue<String> Q) {
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO to_visit(doc_url)values");
 
@@ -223,7 +223,7 @@ public class queryManager {
         return res;
     }
 
-    int optimizedInsert_into_robots(Map<String, RobotTxtHandler> robots_insert) {
+    int optimizedInsertIntoRobots(Map<String, RobotTxtHandler> robots_insert) {
         StringBuilder R1 = new StringBuilder();
         StringBuilder R2 = new StringBuilder();
         R1.append("INSERT INTO robot_handler_1(host, crawl_delay) values");
@@ -252,7 +252,7 @@ public class queryManager {
         return res;
     }
 
-    int optimizedInsert_into_Downloaded_page(Map<String, Document> pages) {
+    int optimizedInsertIntoDownloadedPage(Map<String, Document> pages) {
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO downloaded_page(Url,page_content)values");
 
@@ -267,7 +267,7 @@ public class queryManager {
         return res;
     }
 
-    void optimized_delete_from_to_visit(Set<String> visited_insert) {
+    void optimizedDeleteFromToVisit(Set<String> visited_insert) {
         StringBuilder SB = new StringBuilder();
         SB.append("delete from to_visit where ");
         for (Iterator<String> iterator = visited_insert.iterator(); iterator.hasNext();) {
@@ -328,7 +328,7 @@ public class queryManager {
         return flag;
     }
 
-    Map<String, Document> select_and_delete_pages_by_limit(int limit) {
+    Map<String, Document> selectAndDeletePagesbyLimit(int limit) {
         sql = "select * from downloaded_page limit " + limit + ";";
         Map<String, Document> m = new HashMap();
         try {

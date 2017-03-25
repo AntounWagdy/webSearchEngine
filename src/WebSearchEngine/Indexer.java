@@ -33,11 +33,11 @@ public class Indexer {
         int progress = 0;
 
         for (Map.Entry<String, Document> entry : dataMap.entrySet()) {
-            Q.insertinto_document(entry.getKey(), targetDatabase);
-            doc_id = Q.getId_from_document(entry.getKey(), targetDatabase);
+            Q.insertIntoDocument(entry.getKey(), targetDatabase);
+            doc_id = Q.getIdFromDocument(entry.getKey(), targetDatabase);
             ArrayList<String> res;
             /*1- Stem and insert the title*/
-            /*2- Stem any thing else*/
+ /*2- Stem any thing else*/
             String[] tags = {"title", "ul", "ol", "table", "h1", "h2", "h3", "h4", "h5", "h6", "p"};//, "a" would be considered in phrase search
             ComplexInsert stmt = new ComplexInsert(targetDatabase);
 
@@ -52,11 +52,10 @@ public class Indexer {
                 }
             }
             stmt.Execute();
-            System.out.println("document#"+(++progress) + " has been served!");
+            System.out.println("document#" + (++progress) + " has been served!");
         }
         Q.deleteDB(3 - targetDatabase);
 
     }
-
 
 }

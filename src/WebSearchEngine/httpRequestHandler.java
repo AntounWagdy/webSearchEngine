@@ -15,109 +15,92 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class httpRequestHandler {
 
     private Document Doc;
 
-    
-    boolean check_server_response(String s) {
-    
+    boolean checkServerResponse(String s) {
 
         HttpURLConnection con = null;
-        try {    
+        try {
             URL url = new URL(s);
             con = (HttpURLConnection) url.openConnection();
-  
-            int code = con.getResponseCode();  
+
+            int code = con.getResponseCode();
             String type = con.getContentType();
-          
-            
-            if(type == null || code != HttpURLConnection.HTTP_OK)   
-            {
+
+            if (type == null || code != HttpURLConnection.HTTP_OK) {
                 return false;
-            }
-            else if (type.startsWith("text/html"))   
-            {   
+            } else if (type.startsWith("text/html")) {
                 return true;
             }
-        }
-        catch(SocketException e)  // request sent then internet connection lost
+        } catch (SocketException e) // request sent then internet connection lost
         {
             System.out.println("Connection lost with server");
-        }
-        catch (UnknownHostException e)   // request can't be sent
+        } catch (UnknownHostException e) // request can't be sent
         {
             System.out.println("Site is unreachable");
-        } 
-        catch (IOException ex) {
+        } catch (IOException ex) {
         }
-        if(con != null)
+        if (con != null) {
             con.disconnect();
-        
+        }
+
         return false;
     }
-    
-    
+
     // check Internet connection
-    boolean check_Internet_connectivity()
-    {
+    boolean checkInternetConnectivity() {
         try {
-            HttpURLConnection con = (HttpURLConnection)(new URL("https://www.google.com.eg")).openConnection();
+            HttpURLConnection con = (HttpURLConnection) (new URL("https://www.google.com.eg")).openConnection();
             con.setConnectTimeout(5000);
             con.connect();
         } catch (Exception ex) {
-          return false;
-        } 
-        
+            return false;
+        }
+
         return true;
     }
-    
 
-    boolean valid(URL url)
-    {
+    boolean valid(URL url) {
         try {
-            URI u = url.toURI();            
+            URI u = url.toURI();
         } catch (Exception e) {
             return false;
         }
 
-        if( !(url.getProtocol()).equals("http") && !(url.getProtocol()).equals("https"))
-        {
+        if (!(url.getProtocol()).equals("http") && !(url.getProtocol()).equals("https")) {
             return false;
         }
-        if( url.getAuthority() == null)
-        {
+        if (url.getAuthority() == null) {
             return false;
         }
-        
-        return true;
-    }
-    
-    
-    boolean downloadPage(String url) {
-        try {
-            Doc = Jsoup.connect(url).get();
-        }
-        catch (IOException ex) {
-            return false;
-        }      
+
         return true;
     }
 
-      ArrayList<URL> getUrls() {
+    boolean downloadPage(String url) {
+        try {
+            Doc = Jsoup.connect(url).get();
+        } catch (IOException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    ArrayList<URL> getUrls() {
         ArrayList<URL> myList = new ArrayList<>();
         String urll = "";
         Elements links = Doc.select("a[href]");
-        
-        
+
         for (Element link : links) {
             try {
                 urll = link.absUrl("href");
                 if (!urll.isEmpty()) {
                     myList.add(new URL(urll));
-                    if(myList.size() == 50)
+                    if (myList.size() == 50) {
                         break;
+                    }
                 }
             } catch (MalformedURLException ex) {
                 Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,9 +110,7 @@ public class httpRequestHandler {
         return myList;
     }
 
-      
-    Document get_doc()
-    {
+    Document getDoc() {
         return Doc;
-    }  
+    }
 }

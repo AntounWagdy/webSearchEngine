@@ -7,13 +7,19 @@ import org.jsoup.nodes.Document;
 
 public class Program {
 
-    void run_search_Engine() {
+    int _max_threads;
+
+    public Program(int t) {
+        this._max_threads = t;
+    }
+
+    void runSearchEngine() {
 
         Indexer indexer = new Indexer();
         Map<String, Document> pages;
 
         while (true) {
-            
+
             // check database server first 
             try {
                 databaseManager DBM = databaseManager.getInstance();
@@ -23,24 +29,21 @@ public class Program {
             }
 
             //Crawling
-            int _max_threads = 5;
             int _max_pages = 5000;
             int save_rate = 200;
 
-            Crawler_Data_loader loader = new Crawler_Data_loader();
+            CrawlerDataLoader loader = new CrawlerDataLoader();
 
-            Queue<String> to_visit = loader.get_to_visit_urls();
-            Set<String> visited = loader.get_visited_urls();
-            Map<String, RobotTxtHandler> robots = loader.get_robot_handlers();
-            int crawled_count = loader.get_crawled_count();
+            Queue<String> to_visit = loader.getToVisitUrls();
+            Set<String> visited = loader.getVisitedUrls();
+            Map<String, RobotTxtHandler> robots = loader.getRobotHandlers();
+            int crawled_count = loader.getCrawledCount();
 
-            
-            if(crawled_count < _max_pages)
-            {
-                
+            if (crawled_count < _max_pages) {
+
                 // check internet connection
                 httpRequestHandler h = new httpRequestHandler();
-                if (!h.check_Internet_connectivity()) {
+                if (!h.checkInternetConnectivity()) {
                     System.err.println("no internet connection , try again later");
                     break;
                 }
@@ -50,41 +53,40 @@ public class Program {
                     to_visit.add("https://en.wikipedia.org/wiki/Main_Page");
                     to_visit.add("http://dmoztools.net");
                 }
-            
+
                 Boolean crawling_finished = Boolean.FALSE;   //to check if the crwaler has comletely finsihed or not
                 // create crawler
                 webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate);
 
                 //set crawling data
-                crawler.set_Main_data(to_visit, visited, robots, crawled_count);
+                crawler.setMainData(to_visit, visited, robots, crawled_count);
 
-                crawling_finished = crawler.start_threads();
+                crawling_finished = crawler.startThreads();
 
                 if (!crawling_finished) // if crawler was interrupted
                 {
                     System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                     break;
                 }
-            }
-            else{
+            } else {
                 /*Indexer Part*/
-                pages = this.get_portion_of_downloaded_pages();
+                pages = this.getPortionOfDownloadedPages();
                 indexer.setTarget();
 
-                int count= 0;
+                int count = 0;
                 while (!pages.isEmpty()) {
                     indexer.setDataMap(pages);
                     indexer.Execute();
-                    pages = this.get_portion_of_downloaded_pages();
-                    count+=200;
-                    System.out.println(count+" pages successfully indexed");
+                    pages = this.getPortionOfDownloadedPages();
+                    count += 200;
+                    System.out.println(count + " pages successfully indexed");
                 }
             }
             //break;
         }
     }
 
-    Map<String, Document> get_portion_of_downloaded_pages() {
-        return new queryManager().select_and_delete_pages_by_limit(200);
+    Map<String, Document> getPortionOfDownloadedPages() {
+        return new queryManager().selectAndDeletePagesbyLimit(200);
     }
 }

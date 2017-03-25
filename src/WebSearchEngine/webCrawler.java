@@ -17,57 +17,51 @@ import org.jsoup.nodes.Document;
 public class webCrawler {
 
     // Crawler's variables and counters
-    int max_running_threads;
-    int running_threads_count = 0;       //number of running threads
-    int max_crawled_pages;               // max number of pages to be crawled
-    int saving_rate;                     // number of pages to be crawled between two checkpoints
-    int crawled_pages_count;             // number of crawled pages till now
-    Boolean crawling_finished = false;   // if the crawling phase has completely finished, this boolean will be set "true"
-    
+    int maxRunningThreads;
+    int runningThreadsCount = 0;       //number of running threads
+    int maxCrawledPages;               // max number of pages to be crawled
+    int savingRate;                     // number of pages to be crawled between two checkpoints
+    int crawledPagesCount;             // number of crawled pages till now
+    Boolean crawlingFinished = false;   // if the crawling phase has completely finished, this boolean will be set "true"
+
     // Crawler's main Data dtructures
-    Queue<String> to_visit;
-    Set<String> visited;     
+    Queue<String> toVisit;
+    Set<String> visited;
     Map<String, RobotTxtHandler> RobotHandlers;    // key = hostname , value = RobotTxtobject
-    
+
     //to_visit: Queue that contains urls to be crawled in future
-    
     //visited: Set that contains URLS popped from to_visit queue
-    
     //RobotHandlers: Map , each host name has a robot handler object 
     //      contain all needed robotTxtHandlers for all websites,
     //      robot.txt will be fetched only one time per website, not for
     //      every page
-
-    
-    
     //Auxiliary data structures, used only to track changes between check points
-    Set<String> visited_per_CP;                  // visited URLs to be added to database at each checkpoint
-    Queue<String> to_visit_per_CP;               // URLS that are pushed in queue after the last checkpoint ,but not popped
-    Map<String, RobotTxtHandler> Robots_per_CP;  // handlers inserted in Robot handler map after the last checkpoint
-    Map<String, Document> crawled_per_CP;        // crawled pages inserted in crawled_pages map after last checkpoint
-
+    Set<String> visitedPerCP;                  // visited URLs to be added to database at each checkpoint
+    Queue<String> toVisitPerCP;               // URLS that are pushed in queue after the last checkpoint ,but not popped
+    Map<String, RobotTxtHandler> RobotsPerCP;  // handlers inserted in Robot handler map after the last checkpoint
+    Map<String, Document> crawledPerCP;        // crawled pages inserted in crawled_pages map after last checkpoint
 
     public webCrawler(int _max_threads, int _max_pages, int save_rate) {
-        
-        max_running_threads = _max_threads;
-        max_crawled_pages = _max_pages;
-        saving_rate = save_rate;
+
+        maxRunningThreads = _max_threads;
+        maxCrawledPages = _max_pages;
+        savingRate = save_rate;
 
         //initialize Main data structure
-        to_visit = new ConcurrentLinkedQueue();
+        toVisit = new ConcurrentLinkedQueue();
         visited = new ConcurrentSkipListSet();
         RobotHandlers = new ConcurrentHashMap();
 
         //initialize Auxiliary Data structure
-        visited_per_CP = new ConcurrentSkipListSet();
-        to_visit_per_CP = new ConcurrentLinkedQueue();
-        Robots_per_CP = new ConcurrentHashMap();
-        crawled_per_CP = new ConcurrentHashMap();
+        visitedPerCP = new ConcurrentSkipListSet();
+        toVisitPerCP = new ConcurrentLinkedQueue();
+        RobotsPerCP = new ConcurrentHashMap();
+        crawledPerCP = new ConcurrentHashMap();
     }
 
     boolean checkRobotTxt(String urlString) {
 
-        synchronized (Robots_per_CP) {
+        synchronized (RobotsPerCP) {
             try {
                 URL url = new URL(urlString);
                 URL base = new URL(url.getProtocol() + "://" + url.getHost() + (url.getPort() > -1 ? ":" + url.getPort() : ""));
@@ -76,7 +70,7 @@ public class webCrawler {
                 {
                     RobotTxtHandler H = new RobotTxtHandler(base);
                     RobotHandlers.put(base.getHost(), H);
-                    Robots_per_CP.put(base.getHost(), H);
+                    RobotsPerCP.put(base.getHost(), H);
                 }
 
                 RobotTxtHandler RH = RobotHandlers.get(base.getHost());
@@ -85,12 +79,13 @@ public class webCrawler {
                  *disallowed but allowed for this agent
                  */
                 ArrayList<String> Disallowed = RH.getDisallowed();
-                
-                for(String dis:Disallowed){
-                    if(urlString.matches(dis))
+
+                for (String dis : Disallowed) {
+                    if (urlString.matches(dis)) {
                         return false;
+                    }
                 }
-                
+
                 return true;
 
             } catch (MalformedURLException ex) {
@@ -102,34 +97,34 @@ public class webCrawler {
     }
 
     // set main data before crawling, if you have a saved version
-    void set_Main_data(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH, int cc) {
-        to_visit = TV;
+    void setMainData(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH, int cc) {
+        toVisit = TV;
         visited = V;
         RobotHandlers = RH;
-        crawled_pages_count = cc;
+        crawledPagesCount = cc;
     }
 
     // used to insert a page in carawled_per_CP Map, preparing it to be inserted in DB
-    boolean add_page(String url, Document page) {
+    boolean addPage(String url, Document page) {
 
-        synchronized (crawled_per_CP) {
+        synchronized (crawledPerCP) {
 
-            if (crawled_pages_count < max_crawled_pages) {
+            if (crawledPagesCount < maxCrawledPages) {
 
-                crawled_per_CP.put(url, page);
-                crawled_pages_count++;
+                crawledPerCP.put(url, page);
+                crawledPagesCount++;
                 System.out.println(url);
-                System.out.println("crawl count =" + crawled_pages_count);
+                System.out.println("crawl count =" + crawledPagesCount);
 
                 //if you crawled the agreed upon number "saving rate" , then save data in DB            
-                if (crawled_per_CP.size() == saving_rate) {
+                if (crawledPerCP.size() == savingRate) {
 
-                    synchronized (to_visit_per_CP) {
-                        synchronized (visited_per_CP) {
-                            synchronized (Robots_per_CP) {
+                    synchronized (toVisitPerCP) {
+                        synchronized (visitedPerCP) {
+                            synchronized (RobotsPerCP) {
                                 try {
                                     System.out.println("Waiting ...");
-                                    update_DB();
+                                    updateDB();
                                     System.out.println("DB updated");
                                 } catch (Exception e) {
                                 }
@@ -139,13 +134,13 @@ public class webCrawler {
                 }
                 return true;
             } else {
-                crawling_finished = Boolean.TRUE;
+                crawlingFinished = Boolean.TRUE;
 
                 queryManager qm = new queryManager();
-                qm.Flush_visited();
-                qm.Flush_to_visit();
-                qm.Flush_robot_2();
-                qm.Flush_robot_1();
+                qm.flushVisited();
+                qm.flushToVisit();
+                qm.flushRobot_2();
+                qm.flushRobot_1();
 
             }
             return false;
@@ -155,20 +150,20 @@ public class webCrawler {
     //used to push urls into to_visit queue, to_visit_per_CP
     public boolean pushUrl(String url) {
 
-        URL_NORMALIZER normalizer = new URL_NORMALIZER(url);
+        UrlNormalizer normalizer = new UrlNormalizer(url);
         try {
             url = new URL(normalizer.normalize()).toString();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(crawl_thread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(crawlThread.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        synchronized (to_visit) {
+        synchronized (toVisit) {
             synchronized (visited) {
-                synchronized (to_visit_per_CP) {
+                synchronized (toVisitPerCP) {
 
-                    if (!to_visit.contains(url) && !visited.contains(url)) {
-                        to_visit_per_CP.add(url);
-                        return to_visit.add(url);
+                    if (!toVisit.contains(url) && !visited.contains(url)) {
+                        toVisitPerCP.add(url);
+                        return toVisit.add(url);
                     }
                     return false;
                 }
@@ -177,15 +172,15 @@ public class webCrawler {
     }
 
     // used to pop a url from to_visit queue to start its processing in a thread
-    String popUrl() {  
+    String popUrl() {
 
-        synchronized (to_visit) {
+        synchronized (toVisit) {
             synchronized (visited) {
-                synchronized (visited_per_CP) {
-                    String url = to_visit.poll();
+                synchronized (visitedPerCP) {
+                    String url = toVisit.poll();
                     if (url != null) {
                         visited.add(url);
-                        visited_per_CP.add(url);
+                        visitedPerCP.add(url);
                     }
                     return url;
                 }
@@ -195,62 +190,60 @@ public class webCrawler {
 
     //called by a thread when it finishes its work
     synchronized void finish() {
-        running_threads_count--;
-        if (running_threads_count == 0) {
+        runningThreadsCount--;
+        if (runningThreadsCount == 0) {
 
             System.out.println("5lass ,  raowa7");
-            System.out.println("size of queue = " + to_visit.size());
-            System.out.println(crawled_pages_count);
+            System.out.println("size of queue = " + toVisit.size());
+            System.out.println(crawledPagesCount);
         }
     }
 
     // used to start The crawling threads
-    boolean start_threads() {
+    boolean startThreads() {
 
-        Thread ts[] = new Thread[max_running_threads];
+        Thread ts[] = new Thread[maxRunningThreads];
 
-        for (int i = 0; i < max_running_threads; i++) {
-            ts[i] = new crawl_thread(this);
+        for (int i = 0; i < maxRunningThreads; i++) {
+            ts[i] = new crawlThread(this);
             ts[i].start();
-            running_threads_count++;
-            System.out.println("new thread created: " + running_threads_count);
+            runningThreadsCount++;
+            System.out.println("new thread created: " + runningThreadsCount);
         }
 
-        for (int i = 0; i < max_running_threads; i++) {
+        for (int i = 0; i < maxRunningThreads; i++) {
             try {
                 ts[i].join();
             } catch (InterruptedException ex) {
                 Logger.getLogger(webCrawler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return crawling_finished;
+        return crawlingFinished;
     }
 
-    
     // used to update the DB at each CP
-    void update_DB() throws SQLException {
+    void updateDB() throws SQLException {
         queryManager qm = new queryManager();
 
         //////////////////// update visited set in the DB /////////////////////////
-        qm.optimizedInsert_into_visited(visited_per_CP);
+        qm.optimizedInsertIntoVisited(visitedPerCP);
 
         /////////////update to_visit queue in the DB/////////////////////
-        qm.optimizedInsert_into_to_visit(to_visit_per_CP);
-        qm.optimized_delete_from_to_visit(visited_per_CP);
+        qm.optimizedInsertIntoToVisit(toVisitPerCP);
+        qm.optimizedDeleteFromToVisit(visitedPerCP);
 
         ///////////////////update Robot handlers in DB/////////////////
-        if (!Robots_per_CP.isEmpty()) {
-            qm.optimizedInsert_into_robots(Robots_per_CP);
+        if (!RobotsPerCP.isEmpty()) {
+            qm.optimizedInsertIntoRobots(RobotsPerCP);
         }
 
         //////////////////update downloaded pages in DB//////////////////
-        qm.optimizedInsert_into_Downloaded_page(crawled_per_CP);
-
+        qm.optimizedInsertIntoDownloadedPage(crawledPerCP);
 
         //clear auxiliary data 
-        visited_per_CP.clear();
-        to_visit_per_CP.clear();
-        Robots_per_CP.clear();
-        crawled_per_CP.clear();
+        visitedPerCP.clear();
+        toVisitPerCP.clear();
+        RobotsPerCP.clear();
+        crawledPerCP.clear();
     }
 }
