@@ -6,7 +6,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,36 +15,31 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jsoup.HttpStatusException;
+
 
 public class httpRequestHandler {
 
     private Document Doc;
 
     
-    boolean check_type_html(String s) {
+    boolean check_server_response(String s) {
     
 
-        
         HttpURLConnection con = null;
         try {    
             URL url = new URL(s);
             con = (HttpURLConnection) url.openConnection();
-            //con.setRequestMethod("HEAD");
-            
-            //con.setConnectTimeout(10000);
-            //con.setReadTimeout(10000);
-            
-            int code = con.getResponseCode();  // read time out, unknown host time out
+  
+            int code = con.getResponseCode();  
             String type = con.getContentType();
           
             
             if(type == null || code != HttpURLConnection.HTTP_OK)   
+            {
                 return false;
-            else if (type.startsWith("text/html"))    // we can also check UTF-8
+            }
+            else if (type.startsWith("text/html"))   
             {   
-                // con.disconnect();
-                //System.out.println(url.toString() + "  " + type);
                 return true;
             }
         }
@@ -58,28 +52,24 @@ public class httpRequestHandler {
             System.out.println("Site is unreachable");
         } 
         catch (IOException ex) {
-            //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
-            //return false;
         }
-        
-        con.disconnect();
+        if(con != null)
+            con.disconnect();
         
         return false;
     }
     
     
-    boolean check_connectivity()
+    // check Internet connection
+    boolean check_Internet_connectivity()
     {
         try {
             HttpURLConnection con = (HttpURLConnection)(new URL("https://www.google.com.eg")).openConnection();
             con.setConnectTimeout(5000);
             con.connect();
-        } catch (MalformedURLException ex) {
-            //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            //Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
+        } catch (Exception ex) {
+          return false;
+        } 
         
         return true;
     }
@@ -94,12 +84,13 @@ public class httpRequestHandler {
         }
 
         if( !(url.getProtocol()).equals("http") && !(url.getProtocol()).equals("https"))
-                return false;
-        
-        if( url.getAuthority() == null)
+        {
             return false;
-        
-        
+        }
+        if( url.getAuthority() == null)
+        {
+            return false;
+        }
         
         return true;
     }
@@ -107,22 +98,14 @@ public class httpRequestHandler {
     
     boolean downloadPage(String url) {
         try {
-           // System.out.println(url);
             Doc = Jsoup.connect(url).get();
         }
-       /* catch (HttpStatusException e)
-        {
-            return false;
-        }*/
         catch (IOException ex) {
-           // Logger.getLogger(httpRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-        }
-        
+        }      
         return true;
     }
 
-    //Updated 
       ArrayList<URL> getUrls() {
         ArrayList<URL> myList = new ArrayList<>();
         String urll = "";
@@ -151,7 +134,8 @@ public class httpRequestHandler {
         return Doc;
     }
       
-      
+
+    /*
     String getBody() {
         String s =Doc.body().text();
         String r = null;
@@ -162,7 +146,7 @@ public class httpRequestHandler {
         }
             return r;
         }
-
+*/
     
     
 }

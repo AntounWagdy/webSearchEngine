@@ -1,11 +1,7 @@
 package WebSearchEngine;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jsoup.nodes.Document;
 
 
@@ -16,7 +12,6 @@ import org.jsoup.nodes.Document;
 public class crawl_thread extends Thread{
     webCrawler crawler;
     httpRequestHandler http_handler;
-    Queue<URL> to_visit;
     
     
     public crawl_thread(webCrawler c)
@@ -26,23 +21,15 @@ public class crawl_thread extends Thread{
     }
     
     
-   // @Override
-    /*    public void start()
-    {
-    //super.start();
-    }*/
-    
-    //criteria to stop crawling
-    //1- queue is empty and no running threads
-    
     @Override
     public void run() {
         
     
         while(true)    
         {  
+            
             //1- check internet connectivity, if not connected work should be finished
-            if(!http_handler.check_connectivity())
+            if(!http_handler.check_Internet_connectivity())
             {
                 System.out.println("no Internet Connection!");
                 break;
@@ -53,16 +40,13 @@ public class crawl_thread extends Thread{
             String top = crawler.popUrl();
             if(top == null)
             {
-                //System.out.println("refused 1");
                 continue;
             }
 
-            //3- check if doc is html
-            if(! http_handler.check_type_html(top)){ 
-                System.out.println("refused 2");
+            
+            //3- check server status
+            if(! http_handler.check_server_response(top)){ 
                 continue;
-              //  crawler.finish();
-              //  return;
             }
 
 
@@ -71,8 +55,6 @@ public class crawl_thread extends Thread{
             if(!crawler.checkRobotTxt(top)){
                 System.out.println("refused in the Robots.txt");
                 continue;
-                //crawler.finish();
-                //return;
             }
 
 
@@ -84,21 +66,16 @@ public class crawl_thread extends Thread{
             boolean downloaded = http_handler.downloadPage(top);
             if(! downloaded)
             {
-                System.out.println("refused 4");
-                    continue;
-                //crawler.finish();
-                //return;
+                System.out.println("Error occured while downloading");
+                continue;
             }
             Document page_body = http_handler.get_doc();
             boolean added = crawler.add_page(top.toString(),page_body);  // return false if page is not added
 
-            // if !added means that connection may be lost or crawling limit is reached , so we have to break
+            // if !added means that crawling limit is reached , so we have to break
             if(!added)
             {
-                System.out.println("refused 5");
                 break;
-                //crawler.finish();
-                //return;
             }
 
 
@@ -109,12 +86,10 @@ public class crawl_thread extends Thread{
             //System.out.println("sizeeee: "+ links_in_page.size());
             for(int i=0; i<links_in_page.size(); i++){
                 if(http_handler.valid(links_in_page.get(i)))
+                {
                     crawler.pushUrl(links_in_page.get(i).toString());
+                }
             }
-
-
-            //System.out.println("Da5alt hena fahem");
-
         }
             crawler.finish();
     } 
