@@ -3,10 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/Program.java</file>
-            <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/RobotTxtHandler.java</file>
-            <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/queryManager.java</file>
-            <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/Indexer.java</file>
+            <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/httpRequestHandler.java</file>
             <file>file:/C:/Users/Antoun/Documents/NetBeansProjects/webSearchEngine/src/WebSearchEngine/crawlThread.java</file>
         </group>
     </open-files>

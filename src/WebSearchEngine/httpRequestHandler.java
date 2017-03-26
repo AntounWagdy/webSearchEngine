@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.ArrayList;
 import org.jsoup.Jsoup;
@@ -25,6 +26,8 @@ public class httpRequestHandler {
         try {
             URL url = new URL(s);
             con = (HttpURLConnection) url.openConnection();
+            
+            con.setReadTimeout(5000); con.setConnectTimeout(5000);//if more than 5 secs this will send out a false connection (set for realy bad internet connection)
 
             int code = con.getResponseCode();
             String type = con.getContentType();
@@ -34,6 +37,9 @@ public class httpRequestHandler {
             } else if (type.startsWith("text/html")) {
                 return true;
             }
+        } catch (SocketTimeoutException e) {
+            System.out.println("Connection lost with server due to timeout");
+
         } catch (SocketException e) // request sent then internet connection lost
         {
             System.out.println("Connection lost with server");
@@ -41,6 +47,7 @@ public class httpRequestHandler {
         {
             System.out.println("Site is unreachable");
         } catch (IOException ex) {
+        
         }
         if (con != null) {
             con.disconnect();

@@ -19,18 +19,17 @@ public class Program {
         Map<String, Document> pages;
 
         while (true) {
-
             // check database server first 
             try {
-                databaseManager DBM = databaseManager.getInstance();
+                databaseManager.getInstance();
             } catch (Exception e) {
                 System.err.println("Check database server, no connection");
                 break;
             }
 
             //Crawling
-            int _max_pages = 5000;
-            int save_rate = 200;
+            int _max_pages = 50;
+            int save_rate = 10;
 
             CrawlerDataLoader loader = new CrawlerDataLoader();
 

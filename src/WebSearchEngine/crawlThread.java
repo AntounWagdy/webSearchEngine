@@ -24,7 +24,6 @@ public class crawlThread extends Thread {
     public void run() {
 
         while (true) {
-
             //1- check internet connectivity, if not connected work should be finished
             if (!http_handler.checkInternetConnectivity()) {
                 System.out.println("no Internet Connection!");
