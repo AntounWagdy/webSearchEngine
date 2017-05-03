@@ -14,6 +14,9 @@ public class Program {
     }
 
     void runSearchEngine() {
+        //Crawling
+        int _max_pages = 50;
+        int save_rate = 10;
 
         Indexer indexer = new Indexer();
         Map<String, Document> pages;
@@ -26,10 +29,6 @@ public class Program {
                 System.err.println("Check database server, no connection");
                 break;
             }
-
-            //Crawling
-            int _max_pages = 50;
-            int save_rate = 10;
 
             CrawlerDataLoader loader = new CrawlerDataLoader();
 
@@ -69,6 +68,7 @@ public class Program {
                 }
             } else {
                 /*Indexer Part*/
+                System.out.println("Indexer has started from scratch");
                 pages = this.getPortionOfDownloadedPages();
                 indexer.setTarget();
 

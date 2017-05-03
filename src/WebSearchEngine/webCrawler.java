@@ -198,10 +198,7 @@ public class webCrawler {
     synchronized void finish() {
         runningThreadsCount--;
         if (runningThreadsCount == 0) {
-
-            System.out.println("5lass ,  raowa7");
-            System.out.println("size of queue = " + toVisit.size());
-            System.out.println(crawledPagesCount);
+            System.out.println("Crawler done\n");
         }
     }
 

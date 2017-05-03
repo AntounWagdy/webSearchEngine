@@ -26,7 +26,6 @@ public class Indexer {
     }
 
     public void Execute() {
-        System.out.println("Indexer has started from scratch");
         PorterStemmer PS = new PorterStemmer();
         long doc_id;
 
@@ -54,12 +53,12 @@ public class Indexer {
             stmt.Execute();
             System.out.println("document#" + (++progress) + " has been served!");
         }
-        Q.deleteDB(3 - targetDatabase);
-
     }
 
     void finish() {
-        Q.deleteDB(3 - targetDatabase);    
+        System.out.println("Deleting old DB#"+(3- targetDatabase));
+        Q.deleteDB(3 - targetDatabase);
+        System.out.println("Deleting Done");
     }
 
 }
