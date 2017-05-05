@@ -19,7 +19,7 @@ public class crawlThread extends Thread {
         crawler = c;
         http_handler = new httpRequestHandler();
        robots = c.get_robots();
-       
+       qm = new queryManager();
     }
 
     @Override

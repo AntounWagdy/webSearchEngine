@@ -13,6 +13,7 @@ public class Program {
     queryManager qm;
     public Program(int t) {
         this._max_threads = t;
+        qm = new queryManager();
     }
 
     void runSearchEngine() {

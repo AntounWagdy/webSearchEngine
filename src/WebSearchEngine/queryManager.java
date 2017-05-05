@@ -362,6 +362,7 @@ public class queryManager {
                 String next = iterator.next();
                 sql = "select count(*) from edge where to_url=\'"+next+"\'";
                 myRes = db.select(sql);
+                myRes.next();
                 inlinks_count.put(next, myRes.getInt(1));
             }
             
@@ -375,7 +376,8 @@ public class queryManager {
             sql = SB.toString();
             res = db.insertOrUpdate(sql);
             
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
