@@ -338,13 +338,46 @@ public class queryManager {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        sql = "delete FROM search_engine.doc_words" + ((idx == 2) ? "2" : "") + ";" + ";";
+        sql = "delete FROM search_engine.doc_words" + ((idx == 2) ? "2" : "") + ";";
 
         try {
             flag &= db.delete(sql);
         } catch (SQLException ex) {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        sql = "delete FROM search_engine.phrases" + ((idx == 2) ? "2" : "") + ";";
+
+        try {
+            flag &= db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sql = "delete FROM search_engine.rank" + ((idx == 2) ? "2" : "") + ";";
+
+        try {
+            flag &= db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sql = "delete FROM search_engine.in_links;";
+
+        try {
+            flag &= db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sql = "delete FROM search_engine.edge;";
+        
+        try {
+            flag &= db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return flag;
     }
     
@@ -360,7 +393,7 @@ public class queryManager {
         try {
             for (Iterator<String> iterator = Downloaded_urls.iterator(); iterator.hasNext();) {
                 String next = iterator.next();
-                sql = "select count(*) from edge where to_url=\'"+next+"\'";
+                sql = "select count(*) from edge where from_url=\'"+next+"\'";
                 myRes = db.select(sql);
                 myRes.next();
                 inlinks_count.put(next, myRes.getInt(1));
@@ -452,5 +485,22 @@ public class queryManager {
         } catch (SQLException ex) {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+
+    int insert_phrases_into_phrases_table(long doc_id, ArrayList<String> phrases,int target) {
+        sql = "INSERT INTO phrases"+ ((target == 2) ? "2" : "") +"(webID,phrase)values" ;
+        
+        for(String P :phrases){
+            P = P.trim().toLowerCase();
+            if(!P.isEmpty())
+                sql+="("+(doc_id)+",\""+P+"\"),";
+        }
+        
+        sql = sql.substring(0, sql.length()-1);
+        sql += ";";
+        
+        res = db.insertOrUpdate(sql);
+        return res;   
     }
 }

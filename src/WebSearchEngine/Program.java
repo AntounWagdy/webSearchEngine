@@ -1,7 +1,5 @@
 package WebSearchEngine;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -21,7 +19,7 @@ public class Program {
         int _max_pages = 50;
         int save_rate = 10;
 
-        Indexer indexer = new Indexer();
+        Indexer_Ranker indexer = new Indexer_Ranker();
         Map<String, Document> pages;
 
         while (true) {
@@ -50,8 +48,7 @@ public class Program {
                 }
 
                 if (to_visit.isEmpty()) {
-                    //to_visit.add("https://www.tutorialspoint.com");
-                    to_visit.add("https://en.wikipedia.org/wiki/Main_Page");
+                    to_visit.add("https://wikipedia.org/wiki/Main_Page");
                     to_visit.add("http://dmoztools.net");
                 }
 
@@ -90,11 +87,12 @@ public class Program {
                 int count = 0;
                 while (!pages.isEmpty()) {
                     indexer.setDataMap(pages);
-                    indexer.Execute();
+                    indexer.Execute_Indexer();
                     pages = this.getPortionOfDownloadedPages();
                     count += 200;
                     System.out.println(count + " pages successfully indexed");
                 }
+                indexer.Execute_Ranker();
                 indexer.finish();
             }
             //break;
