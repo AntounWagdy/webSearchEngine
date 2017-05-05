@@ -443,7 +443,9 @@ public class queryManager {
         sql = "delete from edge where (" +
             "(from_url not in(select Url from downloaded_page))" +
              "or" +
-             "(to_url not in(select Url from downloaded_page)));";
+             "(to_url not in(select Url from downloaded_page))"+
+             "or"+
+             "(to_url = from_url));";
         
         try {
             db.delete(sql);

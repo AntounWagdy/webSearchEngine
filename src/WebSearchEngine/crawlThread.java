@@ -75,6 +75,14 @@ public class crawlThread extends Thread {
             //System.out.println("sizeeee: "+ links_in_page.size());
             for (int i = 0; i < links_in_page.size(); i++) {
                 if (http_handler.valid(links_in_page.get(i))) {
+                    
+                     UrlNormalizer normalizer = new UrlNormalizer(links_in_page.get(i).toString());
+                    try {
+                        links_in_page.set(i, new URL(normalizer.normalize()));
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(crawlThread.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                     crawler.pushUrl(links_in_page.get(i).toString());
                 }
                 else

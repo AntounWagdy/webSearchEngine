@@ -100,7 +100,7 @@ public class UrlNormalizer {
 
         Modified_url += (port == -1 || port == unNormalized.getDefaultPort()) ? "" : ":" + port;
 
-        Modified_url += path;
+        Modified_url +=  (path.length() == 0)? "/":path;
 
         Modified_url += (query != null) ? "?" + query : "";
 
