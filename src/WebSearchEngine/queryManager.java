@@ -5,6 +5,7 @@
  */
 package WebSearchEngine;
 
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -266,6 +267,25 @@ public class queryManager {
         res = db.insertOrUpdate(sql);
         return res;
     }
+    
+    int optimizedInsertIntoEdge(String src, ArrayList<URL> dst)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO edge(from_url, to_url)values");
+        
+        for (Iterator<URL> iterator = dst.iterator(); iterator.hasNext();) {
+            String next = iterator.next().toString();
+            SB.append("(\'").append(src).append("\',\'").append(next).append("\'),");
+        }
+        
+        SB.setCharAt(SB.length() - 1, ';');
+        sql = SB.toString();
+        res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    
+    
 
     void optimizedDeleteFromToVisit(Set<String> visited_insert) {
         StringBuilder SB = new StringBuilder();
@@ -327,6 +347,56 @@ public class queryManager {
         }
         return flag;
     }
+    
+    
+    void set_inlinks_count_for_downloaded_pages()
+    {
+        ArrayList<String> Downloaded_urls = SelectDownloadedUrls();   //urls of all downloaded pages
+        StringBuilder SB = new StringBuilder();
+        SB.append("insert into in_links(url,count) values");
+        
+        Map<String, Integer> inlinks_count = new HashMap();   //  M[url] = number of inlinks
+        
+        try {
+            for (Iterator<String> iterator = Downloaded_urls.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+                sql = "select count(*) from edge where to_url=\'"+next+"\'";
+                myRes = db.select(sql);
+                inlinks_count.put(next, myRes.getInt(1));
+            }
+            
+            for (Map.Entry<String, Integer> entrySet : inlinks_count.entrySet()) {
+                String key = entrySet.getKey();
+                Integer value = entrySet.getValue();
+               
+                SB.append("(\'").append(key).append("\',").append(value).append("),");
+            }
+             SB.setCharAt(SB.length() - 1, ';');
+            sql = SB.toString();
+            res = db.insertOrUpdate(sql);
+            
+        } catch (SQLException e) {
+        }
+        
+    }
+    
+    ArrayList<String> SelectDownloadedUrls()
+    {
+        sql = "select Url from downloaded_page;";
+        ArrayList<String> AL = new ArrayList();
+        try {
+            myRes = db.select(sql);
+            while (myRes.next()) {
+                AL.add(myRes.getString("Url"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return  AL;
+    }
+
+    
+    
 
     Map<String, Document> selectAndDeletePagesbyLimit(int limit) {
         sql = "select * from downloaded_page limit " + limit + ";";
@@ -352,5 +422,31 @@ public class queryManager {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return m;
+    }
+    
+    void delete_duplicated_edges()
+    {
+        sql = "DELETE E1 FROM edge E1, edge E2 WHERE E1.pk > E2.pk AND E1.from_url = E2.from_url and E1.to_url = E2.to_url;";
+        
+        try {
+            db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    void delete_edges()
+    {
+        sql = "delete from edge where (" +
+            "(from_url not in(select Url from downloaded_page))" +
+             "or" +
+             "(to_url not in(select Url from downloaded_page)));";
+        
+        try {
+            db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

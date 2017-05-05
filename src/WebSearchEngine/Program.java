@@ -1,5 +1,7 @@
 package WebSearchEngine;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -8,7 +10,7 @@ import org.jsoup.nodes.Document;
 public class Program {
 
     int _max_threads;
-
+    queryManager qm;
     public Program(int t) {
         this._max_threads = t;
     }
@@ -66,6 +68,18 @@ public class Program {
                     System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                     break;
                 }
+                
+                //1- remove duplicates from edge
+                qm.delete_duplicated_edges();
+                
+                //2- remove edges between two nodes ,
+                //one of them isn't included in the 5000 pages
+                qm.delete_edges();
+                
+                //3-calculate in links
+                qm.set_inlinks_count_for_downloaded_pages();
+                
+                
             } else {
                 /*Indexer Part*/
                 System.out.println("Indexer has started from scratch");

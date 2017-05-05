@@ -13,11 +13,13 @@ public class crawlThread extends Thread {
     webCrawler crawler;
     httpRequestHandler http_handler;
     Map<String, RobotTxtHandler> robots;
-
+    queryManager qm;
+    
     public crawlThread(webCrawler c) {
         crawler = c;
         http_handler = new httpRequestHandler();
        robots = c.get_robots();
+       
     }
 
     @Override
@@ -75,7 +77,14 @@ public class crawlThread extends Thread {
                 if (http_handler.valid(links_in_page.get(i))) {
                     crawler.pushUrl(links_in_page.get(i).toString());
                 }
+                else
+                {
+                    links_in_page.remove(i);
+                }
             }
+            
+            qm.optimizedInsertIntoEdge(top, links_in_page);
+            
         }
         crawler.finish();
     }

@@ -166,7 +166,7 @@ public class webCrawler {
         synchronized (toVisit) {
             synchronized (visited) {
                 synchronized (toVisitPerCP) {
-
+                    
                     if (!toVisit.contains(url) && !visited.contains(url)) {
                         toVisitPerCP.add(url);
                         return toVisit.add(url);
