@@ -28,7 +28,7 @@ public class crawlThread extends Thread {
         while (true) {
             //1- check internet connectivity, if not connected work should be finished
             if (!http_handler.checkInternetConnectivity()) {
-                System.out.println("no Internet Connection!");
+                System.err.println("no Internet Connection!");
                 break;
             }
 
@@ -84,14 +84,11 @@ public class crawlThread extends Thread {
                     }
                     
                     crawler.pushUrl(links_in_page.get(i).toString());
-                }
-                else
-                {
-                    links_in_page.remove(i);
+                    crawler.addEdge(top, links_in_page.get(i).toString());
                 }
             }
             
-            qm.optimizedInsertIntoEdge(top, links_in_page);
+            //qm.optimizedInsertIntoEdge(top, links_in_page);
             
         }
         crawler.finish();

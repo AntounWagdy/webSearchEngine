@@ -149,6 +149,40 @@ public class queryManager {
         return myRes;
     }
 
+    
+    ArrayList<String> selectDistictSrc()
+    {
+        sql = "select distinct from_url from edge";
+        ArrayList<String> sources = new ArrayList();
+        try {
+            myRes = db.select(sql);
+        
+            while (myRes.next()) {
+                sources.add(myRes.getString("from_url"));
+            }
+        } catch (SQLException ex) {
+             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return sources;
+    }
+    
+    ArrayList<String> selectdstbysrc(String src)
+    {
+        sql = "select to_url from edge where from_url = "+ src+ ";";
+        ArrayList<String> destination = new ArrayList();
+        try {
+            myRes = db.select(sql);
+        
+            while (myRes.next()) {
+                destination.add(myRes.getString("to_url"));
+            }
+        } catch (SQLException ex) {
+             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return destination;
+    }
+    
+    
     ResultSet selectHostFromRobotHandler_1() {
 
         sql = "SELECT host, crawl_delay FROM search_engine.robot_handler_1";
@@ -268,19 +302,43 @@ public class queryManager {
         return res;
     }
     
-    int optimizedInsertIntoEdge(String src, ArrayList<URL> dst)
+    int optimizedInsertIntoEdge(String src, ArrayList<String> dst)
     {
         StringBuilder SB = new StringBuilder();
         SB.append("INSERT INTO edge(from_url, to_url)values");
         
-        for (Iterator<URL> iterator = dst.iterator(); iterator.hasNext();) {
-            String next = iterator.next().toString();
-            SB.append("(\'").append(src).append("\',\'").append(next).append("\'),");
+        for (Iterator<String> iterator = dst.iterator(); iterator.hasNext();) {
+            String next = iterator.next();
+            SB.append("(\"").append(src).append("\",\"").append(next).append("\"),");
         }
         
         SB.setCharAt(SB.length() - 1, ';');
         sql = SB.toString();
         res = db.insertOrUpdate(sql);
+        return res;
+    }
+    
+    int optimizedInsertIntoEdge(Map<String, ArrayList<String>> Edges)
+    {
+        StringBuilder SB = new StringBuilder();
+        SB.append("INSERT INTO edge(from_url, to_url)values");
+    
+        for (Map.Entry<String, ArrayList<String>> entrySet : Edges.entrySet()) {
+            String key = entrySet.getKey();
+            ArrayList<String> value = entrySet.getValue();
+    
+            for (Iterator<String> iterator = value.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+
+                SB.append("(\"").append(key).append("\",\"").append(next).append("\"),");
+                
+            }
+        }
+        
+        SB.setCharAt(SB.length() - 1, ';');
+        sql = SB.toString();
+        res = db.insertOrUpdate(sql);
+        
         return res;
     }
     
@@ -393,7 +451,7 @@ public class queryManager {
         try {
             for (Iterator<String> iterator = Downloaded_urls.iterator(); iterator.hasNext();) {
                 String next = iterator.next();
-                sql = "select count(*) from edge where from_url=\'"+next+"\'";
+                sql = "select count(*) from edge where to_url=\'"+next+"\'";
                 myRes = db.select(sql);
                 myRes.next();
                 inlinks_count.put(next, myRes.getInt(1));

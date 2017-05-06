@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -28,6 +30,7 @@ public class webCrawler {
     Queue<String> toVisit;
     Set<String> visited;
     Map<String, RobotTxtHandler> RobotHandlers;    // key = hostname , value = RobotTxtobject
+    Map<String,ArrayList<String>>Edges;                 // links between pages
 
     //to_visit: Queue that contains urls to be crawled in future
     //visited: Set that contains URLS popped from to_visit queue
@@ -40,6 +43,7 @@ public class webCrawler {
     Queue<String> toVisitPerCP;               // URLS that are pushed in queue after the last checkpoint ,but not popped
     Map<String, RobotTxtHandler> RobotsPerCP;  // handlers inserted in Robot handler map after the last checkpoint
     Map<String, Document> crawledPerCP;        // crawled pages inserted in crawled_pages map after last checkpoint
+    Map<String, ArrayList<String>> EdgesPerCP;         
 
     public webCrawler(int _max_threads, int _max_pages, int save_rate) {
 
@@ -51,12 +55,14 @@ public class webCrawler {
         toVisit = new ConcurrentLinkedQueue();
         visited = new ConcurrentSkipListSet();
         RobotHandlers = new ConcurrentHashMap();
+        Edges = new ConcurrentHashMap();
 
         //initialize Auxiliary Data structure
         visitedPerCP = new ConcurrentSkipListSet();
         toVisitPerCP = new ConcurrentLinkedQueue();
         RobotsPerCP = new ConcurrentHashMap();
         crawledPerCP = new ConcurrentHashMap();
+        EdgesPerCP = new ConcurrentHashMap();
     }
 
     boolean checkRobotTxt(String urlString) {
@@ -97,11 +103,12 @@ public class webCrawler {
     }
 
     // set main data before crawling, if you have a saved version
-    void setMainData(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH, int cc) {
+    void setMainData(Queue<String> TV, Set<String> V, Map<String, RobotTxtHandler> RH, int cc, Map<String, ArrayList<String>> Edges) {
         toVisit = TV;
         visited = V;
         RobotHandlers = RH;
         crawledPagesCount = cc;
+        this.Edges = Edges;
     }
 
     // used to insert a page in carawled_per_CP Map, preparing it to be inserted in DB
@@ -122,6 +129,7 @@ public class webCrawler {
                     synchronized (toVisitPerCP) {
                         synchronized (visitedPerCP) {
                             synchronized (RobotsPerCP) {
+                                synchronized (EdgesPerCP) {
                                 try {
                                     System.out.println("Waiting ...");
                                     updateDB();
@@ -131,6 +139,7 @@ public class webCrawler {
                             }
                         }
                     }
+                }
                 }
                 return true;
             } else {
@@ -152,16 +161,37 @@ public class webCrawler {
         return RobotHandlers;
     }
     
+    public boolean addEdge(String src, String dst){
+       synchronized(Edges){
+
+            if(! Edges.containsKey(src))
+            {
+                Edges.put(src, new ArrayList());
+            }
+           
+           
+           if(  Edges.get(src).contains(dst)  || src.equals(dst))
+            {
+                return false;
+            }
+         
+           
+
+
+            
+           if( ! EdgesPerCP.containsKey(src))
+            {
+                EdgesPerCP.put(src, new ArrayList());
+            }
+            
+            Edges.get(src).add(dst);
+            EdgesPerCP.get(src).add(dst);
+       }
+       return true;
+    }
 
     //used to push urls into to_visit queue, to_visit_per_CP
     public boolean pushUrl(String url) {
-
-        UrlNormalizer normalizer = new UrlNormalizer(url);
-        try {
-            url = new URL(normalizer.normalize()).toString();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(crawlThread.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         synchronized (toVisit) {
             synchronized (visited) {
@@ -243,10 +273,21 @@ public class webCrawler {
         //////////////////update downloaded pages in DB//////////////////
         qm.optimizedInsertIntoDownloadedPage(crawledPerCP);
 
+        
+        /////////////////update Edge table /////////////////////////////
+       /* for (Map.Entry<String, ArrayList<String>> entrySet : EdgesPerCP.entrySet()) {
+            String key = entrySet.getKey();
+            ArrayList<String> value = entrySet.getValue();
+            if(value.size() > 0)
+                qm.optimizedInsertIntoEdge(key, value);
+        }
+*/
+        qm.optimizedInsertIntoEdge(EdgesPerCP);
         //clear auxiliary data 
         visitedPerCP.clear();
         toVisitPerCP.clear();
         RobotsPerCP.clear();
         crawledPerCP.clear();
+        EdgesPerCP.clear();
     }
 }

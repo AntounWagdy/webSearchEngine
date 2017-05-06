@@ -3,6 +3,8 @@ package WebSearchEngine;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -110,4 +112,19 @@ public class CrawlerDataLoader {
         return Hosts;
 
     }
+    
+    Map<String, ArrayList<String>> getEdges()
+    {
+        Map<String, ArrayList<String>> Edges = new ConcurrentHashMap();
+         ArrayList<String> Sources = qm.selectDistictSrc();
+         
+         for (Iterator<String> iterator = Sources.iterator(); iterator.hasNext();) {
+            String next = iterator.next();
+            ArrayList<String> destinationPerSrc = qm.selectdstbysrc(next);
+            Edges.put(next, destinationPerSrc);
+        }
+         
+         return Edges;
+    }
+    
 }

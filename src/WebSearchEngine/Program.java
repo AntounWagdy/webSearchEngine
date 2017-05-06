@@ -1,5 +1,7 @@
 package WebSearchEngine;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -33,9 +35,6 @@ public class Program {
 
             CrawlerDataLoader loader = new CrawlerDataLoader();
 
-            Queue<String> to_visit = loader.getToVisitUrls();
-            Set<String> visited = loader.getVisitedUrls();
-            Map<String, RobotTxtHandler> robots = loader.getRobotHandlers();
             int crawled_count = loader.getCrawledCount();
 
             if (crawled_count < _max_pages) {
@@ -47,9 +46,15 @@ public class Program {
                     break;
                 }
 
+                Queue<String> to_visit = loader.getToVisitUrls();
+                Set<String> visited = loader.getVisitedUrls();
+                Map<String, RobotTxtHandler> robots = loader.getRobotHandlers();
+                Map<String, ArrayList<String>> Edges = loader.getEdges();
+            
+
                 if (to_visit.isEmpty()) {
                     to_visit.add("https://wikipedia.org/wiki/Main_Page");
-                    to_visit.add("http://dmoztools.net");
+                    to_visit.add("http://dmoztools.net/");
                 }
 
                 Boolean crawling_finished = Boolean.FALSE;   //to check if the crwaler has comletely finsihed or not
@@ -57,18 +62,18 @@ public class Program {
                 webCrawler crawler = new webCrawler(_max_threads, _max_pages, save_rate);
 
                 //set crawling data
-                crawler.setMainData(to_visit, visited, robots, crawled_count);
+                crawler.setMainData(to_visit, visited, robots, crawled_count, Edges);
 
                 crawling_finished = crawler.startThreads();
 
                 if (!crawling_finished) // if crawler was interrupted
                 {
-                    System.out.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
+                    System.err.println("error occurred, This crawling phase hasn't fisnished yet, start the program later");
                     break;
                 }
                 
                 //1- remove duplicates from edge
-                qm.delete_duplicated_edges();
+                //qm.delete_duplicated_edges();
                 
                 //2- remove edges between two nodes ,
                 //one of them isn't included in the 5000 pages
