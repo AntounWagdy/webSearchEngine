@@ -18,8 +18,8 @@ public class Program {
 
     void runSearchEngine() {
         //Crawling
-        int _max_pages = 50;
-        int save_rate = 10;
+        int _max_pages = 5000;
+        int save_rate = 200;
 
         Indexer_Ranker indexer = new Indexer_Ranker();
         Map<String, Document> pages;

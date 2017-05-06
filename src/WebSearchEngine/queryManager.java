@@ -168,7 +168,7 @@ public class queryManager {
     
     ArrayList<String> selectdstbysrc(String src)
     {
-        sql = "select to_url from edge where from_url = "+ src+ ";";
+        sql = "select to_url from edge where from_url = \'"+ src+ "\';";
         ArrayList<String> destination = new ArrayList();
         try {
             myRes = db.select(sql);
@@ -451,7 +451,7 @@ public class queryManager {
         try {
             for (Iterator<String> iterator = Downloaded_urls.iterator(); iterator.hasNext();) {
                 String next = iterator.next();
-                sql = "select count(*) from edge where to_url=\'"+next+"\'";
+                sql = "select count(*) from edge where from_url=\'"+next+"\'";
                 myRes = db.select(sql);
                 myRes.next();
                 inlinks_count.put(next, myRes.getInt(1));
