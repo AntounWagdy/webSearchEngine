@@ -447,18 +447,10 @@ public class queryManager {
     }
 
     boolean deleteDB(int idx) {
-        sql = "delete FROM search_engine.document" + ((idx == 2) ? "2" : "") + ";";
-
-        try {
-            flag = db.delete(sql);
-        } catch (SQLException ex) {
-            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         sql = "delete FROM search_engine.doc_words" + ((idx == 2) ? "2" : "") + ";";
 
         try {
-            flag &= db.delete(sql);
+            flag = db.delete(sql);
         } catch (SQLException ex) {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -489,6 +481,14 @@ public class queryManager {
         
         sql = "delete FROM search_engine.edge;";
         
+        try {
+            flag &= db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+                sql = "delete FROM search_engine.document" + ((idx == 2) ? "2" : "") + ";";
+
         try {
             flag &= db.delete(sql);
         } catch (SQLException ex) {
@@ -636,5 +636,28 @@ public class queryManager {
         
         res = db.insertOrUpdate(sql);
         return res;   
+    }
+
+    void insertIntoRank(long id, Double value, int index) {
+        sql = "INSERT INTO rank"     + ((index == 2) ? "2" : "") + "(docId,page_rank)values(" + id + ","+value+");";
+        res = db.insertOrUpdate(sql); 
+    }
+
+    void workingDbCheck() {
+       sql= "select * from working_db;";
+        try {
+            myRes = db.select(sql);
+            if(!myRes.next()){
+                sql = "INSERT INTO working_db values(\"DB\",0);"; //any junk value 
+                db.insertOrUpdate(sql); 
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    void updateDatabase(int targetDatabase) {
+        sql = "update working_db set num = "+targetDatabase+" where DB = \"DB\";"; //any junk value 
+        db.insertOrUpdate(sql); 
     }
 }

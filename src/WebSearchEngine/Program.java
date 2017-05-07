@@ -1,6 +1,5 @@
 package WebSearchEngine;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,12 +19,13 @@ public class Program {
     public Program(int t) {
         this._max_threads = t;
         qm = new queryManager();
+        qm.workingDbCheck();
     }
 
     void runSearchEngine() {
         //Crawling
         int _max_pages = 5000;
-        int save_rate = 200;
+        int save_rate = 100;
 
         
         //data used in ranking
@@ -33,7 +33,6 @@ public class Program {
         Map<String, Integer> out_degree = new HashMap();
         
         //data used in Indexing
-        Indexer_Ranker indexer = new Indexer_Ranker(Graph, out_degree);
         Map<String, Document> pages;
         
 
@@ -89,7 +88,8 @@ public class Program {
             {
                 // ranker data
                 Graph = set_graph_and_outdegree(out_degree);
-                
+                Indexer_Ranker indexer = new Indexer_Ranker(Graph, out_degree,_max_pages);
+
       
                 /*Indexer Part*/
                 System.out.println("Indexer has started from scratch");
@@ -104,10 +104,11 @@ public class Program {
                     count += 200;
                     System.out.println(count + " pages successfully indexed");
                 }
+                System.out.println("Started ranking");
                 indexer.Execute_Ranker();
+                System.out.println("Finished Ranking");
                 indexer.finish();
             }
-            //break;
         }
     }
 
