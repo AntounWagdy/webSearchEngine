@@ -66,8 +66,8 @@ public class Indexer_Ranker {
             ArrayList<String> phrases = new ArrayList<>();
 
             /*1- Stem and insert the title*/
- /*2- Stem any thing else*/
-            String[] tags = {"title", "ul", "ol", "table", "h1", "h2", "h3", "h4", "h5", "h6", "p"};//, "a" would be considered in phrase search
+            /*2- Stem any thing else*/
+            String[] tags = {"title", "ul", "ol", "table", "h1", "h2", "h3", "h4", "h5", "h6", "p"};
             ComplexInsert stmt = new ComplexInsert(targetDatabase);
 
             for (int i = 0; i < tags.length; i++) {

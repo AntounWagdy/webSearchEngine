@@ -5,8 +5,6 @@
  */
 package WebSearchEngine;
 
-import static java.lang.reflect.Array.set;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
