@@ -12,7 +12,7 @@ public class Indexer_Ranker {
     queryManager Q;
     int targetDatabase;
 
-    public Indexer_Ranker() {
+    public Indexer_Ranker(Map<String, ArrayList<String>>InLinks, Map<String, Integer>OutDegree) {
         Q = new queryManager();
     }
 

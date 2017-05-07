@@ -1,10 +1,16 @@
 package WebSearchEngine;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsoup.nodes.Document;
 
 public class Program {
@@ -21,8 +27,15 @@ public class Program {
         int _max_pages = 5000;
         int save_rate = 200;
 
-        Indexer_Ranker indexer = new Indexer_Ranker();
+        
+        //data used in ranking
+        Map<String, ArrayList<String>> Graph = new HashMap();
+        Map<String, Integer> out_degree = new HashMap();
+        
+        //data used in Indexing
+        Indexer_Ranker indexer = new Indexer_Ranker(Graph, out_degree);
         Map<String, Document> pages;
+        
 
         while (true) {
             // check database server first 
@@ -49,7 +62,7 @@ public class Program {
                 Queue<String> to_visit = loader.getToVisitUrls();
                 Set<String> visited = loader.getVisitedUrls();
                 Map<String, RobotTxtHandler> robots = loader.getRobotHandlers();
-                Map<String, ArrayList<String>> Edges = loader.getEdges();
+                Map<String, ArrayList<String>> Edges = qm.selectALLEdges();
             
 
                 if (to_visit.isEmpty()) {
@@ -72,18 +85,12 @@ public class Program {
                     break;
                 }
                 
-                //1- remove duplicates from edge
-                //qm.delete_duplicated_edges();
+            }else
+            {
+                // ranker data
+                Graph = set_graph_and_outdegree(out_degree);
                 
-                //2- remove edges between two nodes ,
-                //one of them isn't included in the 5000 pages
-                qm.delete_edges();
-                
-                //3-calculate in links
-                qm.set_inlinks_count_for_downloaded_pages();
-                
-                
-            } else {
+      
                 /*Indexer Part*/
                 System.out.println("Indexer has started from scratch");
                 pages = this.getPortionOfDownloadedPages();
@@ -106,5 +113,45 @@ public class Program {
 
     Map<String, Document> getPortionOfDownloadedPages() {
         return new queryManager().selectAndDeletePagesbyLimit(200);
+    }
+    
+    
+    Map<String, ArrayList<String>> set_graph_and_outdegree(Map<String, Integer> outdegree)
+    {
+        ArrayList<String> crawled_urls = qm.selectUrlsFromDownloadedpages();
+        ResultSet res= qm.selectALLEdges2();
+        Map<String, ArrayList<String>>inlinks = new HashMap();
+        
+        
+        try {
+            while(res.next())
+            {
+                if(! outdegree.containsKey(res.getString("from_url")))
+                    outdegree.put(res.getString("from_url"), 0);
+                
+                outdegree.put(res.getString("from_url"), outdegree.get(res.getString("from_url")) + 1);
+                
+                if(crawled_urls.contains(res.getString("to_url")))
+                {
+                    if(! inlinks.containsKey(res.getString("to_url")))
+                        inlinks.put( res.getString("to_url"), new ArrayList() ) ;
+                    inlinks.get(res.getString("to_url")).add(res.getString("from_url"));
+                }
+            }
+            
+            for (Iterator<String> iterator = crawled_urls.iterator(); iterator.hasNext();) {
+                String next = iterator.next();
+                
+                if(! inlinks.containsKey(next) )
+                    inlinks.put(next, new ArrayList());
+                
+                if(! outdegree.containsKey(next))
+                    outdegree.put(next, 0);
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return inlinks;
     }
 }

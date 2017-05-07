@@ -113,7 +113,7 @@ public class CrawlerDataLoader {
 
     }
     
-    Map<String, ArrayList<String>> getEdges()
+/*    Map<String, ArrayList<String>> getEdges()
     {
         Map<String, ArrayList<String>> Edges = new ConcurrentHashMap();
          ArrayList<String> Sources = qm.selectDistictSrc();
@@ -122,9 +122,8 @@ public class CrawlerDataLoader {
             String next = iterator.next();
             ArrayList<String> destinationPerSrc = qm.selectdstbysrc(next);
             Edges.put(next, destinationPerSrc);
-        }
-         
+                 }
+
          return Edges;
-    }
-    
+    }*/
 }

@@ -5,6 +5,7 @@
  */
 package WebSearchEngine;
 
+import static java.lang.reflect.Array.set;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,53 @@ public class queryManager {
         return myRes;
     }
 
+    ArrayList<String> selectUrlsFromDownloadedpages()
+    {
+        sql = "SELECT Url FROM search_engine.downloaded_page;";
+        ArrayList<String> Urls = new ArrayList();
+        
+        try {
+            myRes = db.select(sql);
+            while (myRes.next()) {                
+                Urls.add(myRes.getString(1));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return  Urls;
+    }
+    
+    Map<String, ArrayList<String>> selectALLEdges()
+    {
+        sql = "select * from edge;";
+        Map<String, ArrayList<String>> Edges = new HashMap();
+        
+        try {
+            myRes = db.select(sql);
+            
+            while (myRes.next()) {
+                if(!Edges.containsKey(myRes.getString(1)))
+                    Edges.put(myRes.getString(1), new ArrayList());
+                Edges.get(myRes.getString(1)).add(myRes.getString(2));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Edges;
+    }
+    
+    ResultSet selectALLEdges2()
+    {
+        sql = "select * from edge;";
+        try {
+            myRes = db.select(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return myRes;
+    }
+    
     ResultSet selectIDbyUrl(String url) {
         sql = "select docID from to_visit where doc_url ='" + url + "'";
         try {
@@ -114,6 +162,17 @@ public class queryManager {
             flag = db.delete(sql);
         } catch (SQLException ex) {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return flag;
+    }
+    
+    boolean flushEdges()
+    {
+        sql = "delete from Edge;";
+        try {
+            flag = db.delete(sql);
+        } catch (Exception e) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, e);
         }
         return flag;
     }
@@ -438,6 +497,23 @@ public class queryManager {
         
         return flag;
     }
+    
+    
+    int get_inLinks_size()
+    {
+        sql = "select count(*) from inlinks;";
+      
+        try {
+            myRes = db.select(sql);
+            myRes.next();
+            return myRes.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return 0;
+    }
+    
     
     
     void set_inlinks_count_for_downloaded_pages()
