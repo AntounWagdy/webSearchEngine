@@ -94,7 +94,7 @@ public class queryManager {
     }
     
     ResultSet selectIDbyUrl(String url) {
-        sql = "select docID from to_visit where doc_url ='" + url + "'";
+        sql = "select docID from to_visit where doc_url =\"" + url + "\"";
         try {
             myRes = db.select(sql);
         } catch (SQLException ex) {
@@ -445,10 +445,18 @@ public class queryManager {
     }
 
     boolean deleteDB(int idx) {
-        sql = "delete FROM search_engine.doc_words" + ((idx == 2) ? "2" : "") + ";";
+        sql = "delete FROM search_engine.titles" + ((idx == 2) ? "2" : "") + ";";
 
         try {
             flag = db.delete(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sql = "delete FROM search_engine.doc_words" + ((idx == 2) ? "2" : "") + ";";
+
+        try {
+            flag &= db.delete(sql);
         } catch (SQLException ex) {
             Logger.getLogger(queryManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -657,5 +665,13 @@ public class queryManager {
     void updateDatabase(int targetDatabase) {
         sql = "update working_db set num = "+targetDatabase+" where DB = \"DB\";"; //any junk value 
         db.insertOrUpdate(sql); 
+    }
+
+    void insertTitle(long doc_id, String title, int index) {
+        if(title.length() >= 70){
+            title = title.substring(0, 69);
+        }
+        sql = "INSERT INTO titles"+ ((index == 2) ? "   2" : "") + "(doc_id,title)values(" + doc_id + ",\""+title+"\");";
+        res = db.insertOrUpdate(sql); 
     }
 }
